@@ -129,7 +129,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     
     func drawingTapped(_ drawing: Drawing) {
         if Drawing.UploadState(rawValue: drawing.uploadState) != .success {
-            persist(drawing: drawing)
+            persist(drawing: drawing, isUpdate: false)
         }
 
         presentDrawing(drawing: drawing)
@@ -195,14 +195,14 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     private func createDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Double, steps: [DrawStep], image: UIImage?) {
         update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
         store.create(drawing: drawing)
-        persist(drawing: drawing)
+        persist(drawing: drawing, isUpdate: false)
     }
 
     private func updateDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Double, steps: [DrawStep], image: UIImage?) {
         store.inTransaction { [weak self] _ in
             self?.update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
         }
-        persist(drawing: drawing)
+        persist(drawing: drawing, isUpdate: true)
     }
 
     private func deleteDrawingsOnTheServer() {
@@ -216,9 +216,10 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         }
     }
 
-    private func persist(drawing: Drawing) {
+    private func persist(drawing: Drawing, isUpdate: Bool) {
         store.setUploadState(for: drawing, to: .sending)
-        drawingsNetworkLayer.create(drawing: drawing) { [weak self] result in
+
+        let completion = { [weak self] (result: DrawingsNetworkLayer.CreateDrawingResult) in
             switch result {
             case .success(let json):
                 self?.store.merge(json, into: drawing)
@@ -227,12 +228,14 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
                 self?.store.setUploadState(for: drawing, to: .failed)
             }
         }
+
+        drawingsNetworkLayer.create(drawing: drawing, isUpdate: isUpdate, completion: completion)
     }
     
     @objc private func reachabilityChanged(notification: Notification) {
         switch reachability.connection {
         case .wifi, .cellular:
-            store.localDrawings.forEach { self.persist(drawing: $0) }
+            store.localDrawings.forEach { self.persist(drawing: $0, isUpdate: false) }
         case .unavailable, .none:
             print("Network not reachable")
         }

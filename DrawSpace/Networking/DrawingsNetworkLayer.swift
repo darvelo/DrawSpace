@@ -74,8 +74,8 @@ class DrawingsNetworkLayer {
             }
         }
     }
-    
-    func create(drawing: Drawing, completion: @escaping (CreateDrawingResult) -> Void) {
+
+    func create(drawing: Drawing, isUpdate: Bool, completion: @escaping (CreateDrawingResult) -> Void) {
         guard let data = drawing.localImageData else {
             assertionFailure("Had no local image data to persist")
             return
@@ -84,7 +84,7 @@ class DrawingsNetworkLayer {
         upload(data: data) { result in
             switch result {
             case .success(let json):
-                self.persist(drawing: drawing, imageId: json["id"] as? String, imageUrl: json["url"] as? String, completion: completion)
+                self.persist(drawing: drawing, imageId: json["id"] as? String, imageUrl: json["url"] as? String, isUpdate: isUpdate, completion: completion)
             case .failure:
                 completion(result)
             }
@@ -107,8 +107,8 @@ class DrawingsNetworkLayer {
         }
     }
     
-    private func persist(drawing: Drawing, imageId: String?, imageUrl: String?, completion: @escaping (CreateDrawingResult) -> Void) {
-        guard let url = URL(string: drawingsUrlPath) else { return }
+    private func persist(drawing: Drawing, imageId: String?, imageUrl: String?, isUpdate: Bool, completion: @escaping (CreateDrawingResult) -> Void) {
+        guard let url = URL(string: isUpdate ? "\(drawingsUrlPath)/\(drawing.id)": drawingsUrlPath) else { return }
         
         let headers: Alamofire.HTTPHeaders = [
             "Accept": "accept: application/json",
@@ -131,7 +131,7 @@ class DrawingsNetworkLayer {
         }
         
         let request = sessionManager.request(url,
-                                             method: .post,
+                                             method: isUpdate ? .put : .post,
                                              parameters: parameters,
                                              encoding: Alamofire.JSONEncoding(),
                                              headers: headers)
