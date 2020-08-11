@@ -18,3 +18,5 @@ Session.vim
 # this project
 Pods
 *.xcworkspace
+uploads/*
+!uploads/.gitkeep
