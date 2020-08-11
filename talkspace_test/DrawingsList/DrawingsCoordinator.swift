@@ -170,7 +170,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         try? fileManager.removeItem(at: localUrl)
     }
 
-    private func update(drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
+    private func update(drawing: Drawing, canvasSize: CGSize, duration: Double, steps: [DrawStep], image: UIImage?) {
         drawing.height = Double(canvasSize.height)
         drawing.width = Double(canvasSize.width)
         drawing.drawingDurationSeconds = duration
@@ -189,13 +189,13 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         }
     }
 
-    private func createDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
+    private func createDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Double, steps: [DrawStep], image: UIImage?) {
         update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
         store.create(drawing: drawing)
         persist(drawing: drawing)
     }
 
-    private func updateDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
+    private func updateDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Double, steps: [DrawStep], image: UIImage?) {
         store.inTransaction { [weak self] _ in
             self?.update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
         }

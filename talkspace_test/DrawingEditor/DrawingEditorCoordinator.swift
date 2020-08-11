@@ -13,12 +13,12 @@ enum DrawingEditorCoordinatorEvent {
     case cancel
     case create(drawing: Drawing,
                 canvasSize: CGSize,
-                duration: Int,
+                duration: Double,
                 steps: [DrawStep],
                 image: UIImage?)
     case update(drawing: Drawing,
                 canvasSize: CGSize,
-                duration: Int,
+                duration: Double,
                 steps: [DrawStep],
                 image: UIImage?)
 }
@@ -40,7 +40,7 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     private var startedAt = Date()
 
     private var createdAt = Date()
-    private var drawingDurationSeconds = 0
+    private var drawingDurationSeconds: Double = 0
     private var steps = [DrawStep]()
     private lazy var drawing: Drawing = {
         let model = Drawing()
@@ -76,15 +76,39 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     
     // MARK: Coordinator
     
-    func start() { }
+    func start() {
+        startedAt = Date()
+    }
     
     // MARK: DrawingEditorViewControllerDelegate
     
     func cancelTapped() {
         delegate?.handleDrawingEditorCoordinatorEvent(.cancel)
     }
+
+    func replayTapped() {
+        guard steps.count > 0 else { return }
+
+        drawingEditorViewController.replay(steps: steps) { [weak self] in
+            guard let strongSelf = self else { return }
+            guard let lastStep = strongSelf.steps.last else {
+                assertionFailure("Editor should have contained at least one step")
+                return
+            }
+
+            // Allow the user to pick up where they left off after replaying,
+            // so that time spent in the replay doesn't add to the total drawing duration.
+            strongSelf.drawingDurationSeconds = lastStep.durationMark
+            strongSelf.startedAt = Date()
+        }
+    }
     
     func doneTapped(image: UIImage?, canvasSize: CGSize) {
+        guard steps.count > 0 else {
+            delegate?.handleDrawingEditorCoordinatorEvent(.cancel)
+            return
+        }
+
         let event: DrawingEditorCoordinatorEvent
         if isUpdate {
             event = .update(drawing: drawing,
@@ -191,9 +215,9 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
 
     // MARK: Private Methods
 
-    func durationMark() -> Int {
-        let sessionDuration = Int(Date().timeIntervalSince(startedAt))
-        let durationMark = drawing.drawingDurationSeconds + sessionDuration
+    func durationMark() -> Double {
+        let sessionDuration = Date().timeIntervalSince(startedAt)
+        let durationMark = drawingDurationSeconds + sessionDuration
         return durationMark
     }
 }

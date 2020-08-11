@@ -16,6 +16,7 @@ enum DrawPanEvent {
 
 protocol DrawingEditorViewControllerDelegate: class {
     func cancelTapped()
+    func replayTapped()
     func doneTapped(image: UIImage?, canvasSize: CGSize)
     func handleDrawTap(point: CGPoint)
     func handleColorChange(color: UIColor)
@@ -70,7 +71,8 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
         view.backgroundColor = .white
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped)),
+                                              UIBarButtonItem(barButtonSystemItem: .play, target: self, action: #selector(replayTapped))]
 
         view.addSubview(imageView)
         view.addSubview(drawView)
@@ -104,7 +106,8 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        drawSteps()
+        guard let drawing = drawing else { return }
+        drawSteps(steps: Array(drawing.steps), replay: false)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -129,24 +132,26 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
     }
 
     func update(step: DrawStep) {
-        autoreleasepool { [weak self] in
-            guard let strongSelf = self else { return }
-            let buffer = strongSelf.drawView.draw(steps: [step], imageBuffer: strongSelf.imageBuffer)
-            strongSelf.imageBuffer = buffer
-            strongSelf.imageView.image = buffer
-        }
+        drawSteps(steps: [step], replay: false)
+    }
+
+    func replay(steps: [DrawStep], completion: @escaping (() -> Void)) {
+        imageBuffer = nil
+        imageView.image = nil
+        drawSteps(steps: steps, replay: true, completion: completion)
     }
 
     // MARK: Private Methods
 
-    private func drawSteps() {
-        guard let drawing = drawing else { return }
-
+    private func drawSteps(steps: [DrawStep], replay: Bool, completion: (() -> Void)? = nil) {
         autoreleasepool { [weak self] in
             guard let strongSelf = self else { return }
-            let buffer = strongSelf.drawView.draw(steps: Array(drawing.steps), imageBuffer: strongSelf.imageBuffer)
-            strongSelf.imageBuffer = buffer
-            strongSelf.imageView.image = buffer
+            strongSelf.drawView.draw(steps: steps, replay: replay, imageBuffer: strongSelf.imageBuffer, onStep: { [weak self] buffer in
+                guard let strongSelf = self else { return }
+                strongSelf.imageBuffer = buffer
+                strongSelf.imageView.image = buffer
+            },
+            completion: completion)
         }
     }
 
@@ -154,6 +159,10 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
 
     @objc private func cancelTapped() {
         delegate?.cancelTapped()
+    }
+
+    @objc private func replayTapped() {
+        delegate?.replayTapped()
     }
 
     @objc private func doneTapped() {

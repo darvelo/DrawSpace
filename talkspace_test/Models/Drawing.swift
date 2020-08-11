@@ -40,7 +40,7 @@ class DrawStep: Object {
     var points = List<Point>()
     @objc dynamic var color: Color? = Color()
     @objc dynamic var strokeWidth: Double = 16
-    @objc dynamic var durationMark: Int = 0
+    @objc dynamic var durationMark: Double = 0
 }
 
 extension DrawStep {
@@ -58,7 +58,7 @@ extension DrawStep {
         return uiColor.cgColor
     }
 
-    static func from(color: CGColor, strokeWidth: Double, durationMark: Int, points: [CGPoint]) -> DrawStep? {
+    static func from(color: CGColor, strokeWidth: Double, durationMark: Double, points: [CGPoint]) -> DrawStep? {
         assert(points.count > 0, "Expected there to be more than zero points")
 
         guard let colorComponents = color.components else {
@@ -99,7 +99,7 @@ class Drawing: Object {
     
     @objc dynamic var id: Int = -1
     @objc dynamic var createdAt = Date()
-    @objc dynamic var drawingDurationSeconds: Int = 0
+    @objc dynamic var drawingDurationSeconds: Double = 0
     @objc dynamic var width: Double = 0
     @objc dynamic var height: Double = 0
     @objc dynamic var uploadState: String = UploadState.sending.rawValue
