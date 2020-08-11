@@ -35,6 +35,7 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     private let isUpdate: Bool
 
     private var currentColor = UIColor.red
+    private var currentStrokeWidth: Double = 16
     private var lastPanPoint: CGPoint?
     private var startedAt = Date()
 
@@ -110,10 +111,17 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
         currentColor = color
     }
 
+    func handleStrokeWidthChange(strokeWidth: Double) {
+        currentStrokeWidth = strokeWidth
+    }
+
     func handleDrawTap(point: CGPoint) {
         assert(lastPanPoint == nil, "Expected lastPanPoint to be nil on draw tap")
 
-        guard let step = DrawStep.from(color: currentColor.cgColor, startPoint: point, endPoint: nil) else {
+        guard let step = DrawStep.from(color: currentColor.cgColor,
+                                       strokeWidth: currentStrokeWidth,
+                                       startPoint: point,
+                                       endPoint: nil) else {
             assertionFailure("Failed to create step for draw tap event")
             return
         }
@@ -128,7 +136,10 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
             lastPanPoint = point
         case .move(let point):
             guard let lastPoint = lastPanPoint,
-                let step = DrawStep.from(color: currentColor.cgColor, startPoint: lastPoint, endPoint: point) else {
+                let step = DrawStep.from(color: currentColor.cgColor,
+                                         strokeWidth: currentStrokeWidth,
+                                         startPoint: lastPoint,
+                                         endPoint: point) else {
                 assertionFailure("Failed to create step for pan move event")
                 return
             }
@@ -138,7 +149,10 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
             drawingEditorViewController.update(step: step)
         case .end(let point):
             guard let lastPoint = lastPanPoint,
-                let step = DrawStep.from(color: currentColor.cgColor, startPoint: lastPoint, endPoint: point) else {
+                let step = DrawStep.from(color: currentColor.cgColor,
+                                         strokeWidth: currentStrokeWidth,
+                                         startPoint: lastPoint,
+                                         endPoint: point) else {
                     assertionFailure("Failed to create step for pan move event")
                     return
             }

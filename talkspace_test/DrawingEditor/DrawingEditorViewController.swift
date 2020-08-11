@@ -19,6 +19,7 @@ protocol DrawingEditorViewControllerDelegate: class {
     func doneTapped(image: UIImage?, canvasSize: CGSize)
     func handleDrawTap(point: CGPoint)
     func handleColorChange(color: UIColor)
+    func handleStrokeWidthChange(strokeWidth: Double)
     func handleDrawPan(event: DrawPanEvent)
 }
 
@@ -115,6 +116,10 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
 
     func colorTapped(_ color: UIColor) {
         delegate?.handleColorChange(color: color)
+    }
+
+    func sliderMoved(value: Double) {
+        delegate?.handleStrokeWidthChange(strokeWidth: value)
     }
 
     // MARK: Public Methods

@@ -10,6 +10,7 @@ import UIKit
 
 protocol ToolbarViewDelegate: class {
     func colorTapped(_ color: UIColor)
+    func sliderMoved(value: Double)
 }
 
 class ToolbarView: UIView {
@@ -18,7 +19,18 @@ class ToolbarView: UIView {
     
     private let colorViewBorderColor = UIColor.black.cgColor
     private let colorViewBorderWidth: CGFloat = 2
-    
+
+    private lazy var sliderView: UISlider = {
+        let view = UISlider(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.minimumValue = 1
+        view.maximumValue = 80
+        view.value = 16
+        view.isContinuous = false
+        view.addTarget(self, action: #selector(sliderMoved), for: .valueChanged)
+        return view
+    }()
+
     private lazy var redView: UIView = {
         let view = UIView(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -93,13 +105,19 @@ class ToolbarView: UIView {
     init() {
         super.init(frame: .zero)
         
+        addSubview(sliderView)
         addSubview(toolbarColorView)
         
         let colorViewSize = Theme.toolbarView.colorViewSize
         
         NSLayoutConstraint.activate([
             toolbarColorView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor),
-            toolbarColorView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor),
+            toolbarColorView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
+            toolbarColorView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 10),
+
+            sliderView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor),
+            sliderView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
+            sliderView.bottomAnchor.constraint(equalTo: toolbarColorView.topAnchor),
         ])
         
         colorViews.forEach { view in
@@ -128,5 +146,9 @@ class ToolbarView: UIView {
         if sender.state == .ended {
             delegate?.colorTapped(color)
         }
+    }
+
+    @objc func sliderMoved(sender: UISlider) {
+        delegate?.sliderMoved(value: Double(sender.value))
     }
 }

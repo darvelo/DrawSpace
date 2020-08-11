@@ -13,7 +13,7 @@ import UIKit
 struct Theme {
     struct ToolbarView {
         let widthFactor: CGFloat = 0.9
-        let height: CGFloat = 70
+        let height: CGFloat = 140
         let bottomOffset: CGFloat = -20
         let colorViewSize = CGSize(width: 50, height: 50)
     }

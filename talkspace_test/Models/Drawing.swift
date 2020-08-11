@@ -69,7 +69,7 @@ extension DrawStep {
         return CGPoint(x: point.x, y: point.y)
     }
 
-    static func from(color: CGColor, startPoint: CGPoint, endPoint: CGPoint?) -> DrawStep? {
+    static func from(color: CGColor, strokeWidth: Double, startPoint: CGPoint, endPoint: CGPoint?) -> DrawStep? {
         guard let colorComponents = color.components else {
             assertionFailure("Failed to get color components")
             return nil
@@ -95,6 +95,7 @@ extension DrawStep {
         }
 
         let step = DrawStep()
+        step.strokeWidth = strokeWidth
         step.color = stepColor
         step.start = start
         step.end = end
