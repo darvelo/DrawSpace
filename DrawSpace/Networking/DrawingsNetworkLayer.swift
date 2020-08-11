@@ -75,17 +75,18 @@ class DrawingsNetworkLayer {
     }
     
     func create(drawing: Drawing, completion: @escaping (CreateDrawingResult) -> Void) {
-        if let data = drawing.localImageData {
-            upload(data: data) { result in
-                switch result {
-                case .success(let json):
-                    self.persist(drawing: drawing, imageId: json["id"] as? String, imageUrl: json["url"] as? String, completion: completion)
-                case .failure:
-                    completion(result)
-                }
+        guard let data = drawing.localImageData else {
+            assertionFailure("Had no local image data to persist")
+            return
+        }
+
+        upload(data: data) { result in
+            switch result {
+            case .success(let json):
+                self.persist(drawing: drawing, imageId: json["id"] as? String, imageUrl: json["url"] as? String, completion: completion)
+            case .failure:
+                completion(result)
             }
-        } else {
-            persist(drawing: drawing, imageId: nil, imageUrl: nil, completion: completion)
         }
     }
     
