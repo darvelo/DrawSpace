@@ -1,6 +1,8 @@
 # Usage
 
 ```
+$ pod install
+$ open DrawSpace.xcworkspace
 $ cd drawspace-server
 $ npm install
 $ npm run docker
