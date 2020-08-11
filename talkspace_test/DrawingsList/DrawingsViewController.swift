@@ -19,6 +19,7 @@ protocol DrawingsViewControllerDelegate: class {
     func clearDrawingsTapped()
     func syncDrawings(completion: @escaping () -> Void)
     func drawingTapped(_ drawing: Drawing)
+    func deleteDrawing(_ drawing: Drawing)
 }
 
 class DrawingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -134,14 +135,22 @@ class DrawingsViewController: UIViewController, UITableViewDelegate, UITableView
         // Normally I'd put a constant like this in a ViewModel or a Theme struct that's passed down to all ViewControllers.
         return 16 * 5
     }
-    
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        delegate?.deleteDrawing(drawings[indexPath.row])
+    }
+
     // MARK: UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         drawingTapped(drawings[indexPath.row])
     }
-    
+
     // MARK: Private Methods
     
     @objc private func createDrawing() {

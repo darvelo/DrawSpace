@@ -15,6 +15,8 @@ protocol Store {
     var localDrawings: Results<Drawing> { get }
     
     func create(drawing: Drawing)
+    func deleteAllDrawings()
+    func delete(drawing: Drawing)
     func inTransaction(block: (() -> Void))
     func setUploadState(for: Drawing, to: Drawing.UploadState)
     func sync(drawings: DrawingsNetworkLayer.FetchedDrawings)
@@ -68,6 +70,30 @@ class LocalStore: Store {
             drawingsRealm.add(drawing)
         }
         
+        drawingsRealm.refresh()
+    }
+
+    func deleteAllDrawings() {
+        guard let drawingsRealm = drawings.realm else {
+            fatalError("Drawings realm unreachable")
+        }
+
+        try! drawingsRealm.write {
+            drawingsRealm.deleteAll()
+        }
+
+        drawingsRealm.refresh()
+    }
+
+    func delete(drawing: Drawing) {
+        guard let drawingsRealm = drawings.realm else {
+            fatalError("Drawings realm unreachable")
+        }
+
+        try! drawingsRealm.write {
+            drawingsRealm.delete(drawing)
+        }
+
         drawingsRealm.refresh()
     }
 

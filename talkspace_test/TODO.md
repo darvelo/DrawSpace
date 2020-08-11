@@ -12,7 +12,6 @@ This screen is the public list of drawings that all users created. Information t
 
 * Creation date & time.
 * Time it took to draw (from first stroke to sending the drawing).
-* allow a user to delete their drawings
 
 ### Create / Edit drawing
 
@@ -25,3 +24,4 @@ This screen is the public list of drawings that all users created. Information t
 * Thumbnail of the drawing itself.
 * There should be a special “Eraser” brush.
 * The user should be able to choose colors (at least five).
+* allow a user to delete their drawings

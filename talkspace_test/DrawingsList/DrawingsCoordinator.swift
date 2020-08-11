@@ -119,13 +119,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     }
     
     func clearDrawingsTapped() {
-        guard let realm = store.drawings.realm else {
-            fatalError("Unable to get drawings realm")
-        }
-    
-        try! realm.write {
-            realm.deleteAll()
-        }
+        store.deleteAllDrawings()
     }
 
     func syncDrawings(completion: @escaping () -> Void) {
@@ -138,6 +132,10 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         }
 
         presentDrawing(drawing: drawing)
+    }
+
+    func deleteDrawing(_ drawing: Drawing) {
+        store.delete(drawing: drawing)
     }
     
     // MARK: Private Methods
