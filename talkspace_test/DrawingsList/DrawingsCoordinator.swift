@@ -73,6 +73,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     // MARK: DrawingEditorCoordinatorDelegate
     
     func handleDrawingEditorCoordinatorEvent(_ event: DrawingEditorCoordinatorEvent) {
+        // TODO: We shouldn't assume we're in a UINavigationController.
         rootViewController.navigationController?.popViewController(animated: true)
         drawingEditorCoordinator = nil
         
@@ -83,6 +84,8 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
             // Create the drawing once the navigation controller puts the rootViewController's view
             // into the view hierarchy. This ensures the tableView won't try to update offscreen and give a warning.
             // Solution from: https://stackoverflow.com/a/50532891/544252
+            //
+            // TODO: We shouldn't assume we're in a UINavigationController.
             rootViewController.navigationController?.transitionCoordinator?.animate(alongsideTransition: nil) { [weak self] _ in
                 self?.createDrawing(image: image)
             }
@@ -174,6 +177,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         coordinator.delegate = self
         coordinator.start()
         drawingEditorCoordinator = coordinator
+        // TODO: We shouldn't assume we're in a UINavigationController.
         rootViewController.navigationController?.pushViewController(coordinator.rootViewController, animated: true)
     }
 }
