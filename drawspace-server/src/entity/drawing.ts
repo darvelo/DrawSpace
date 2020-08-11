@@ -17,11 +17,11 @@ export default class Drawing {
     @Column('double')
     height: number;
 
-    @Column()
-    imageId: string;
+    @Column({ default: null, nullable: true })
+    imageId?: string;
 
-    @Column()
-    imageUrl: string;
+    @Column({ default: null, nullable: true })
+    imageUrl?: string;
 
     @Column('json')
     steps: string;
