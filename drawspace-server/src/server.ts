@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
-import path from 'path';
 import logger from 'morgan';
 import express from 'express';
 import compression from 'compression';

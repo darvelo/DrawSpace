@@ -56,7 +56,7 @@ api.post('/drawings', async (req: Request, res: Response) => {
         steps,
     } = req.body;
 
-    console.log('Attempting to create drawing with:', req.body);
+    console.log('Attempting to create drawing with:', JSON.stringify(req.body, null, 4));
 
     const drawing = drawingRepository.create({
         createdAt,
