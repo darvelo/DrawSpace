@@ -146,7 +146,7 @@ class DrawingCell: UITableViewCell {
             switch change {
             case .change(_, let properties):
                 for property in properties {
-                    if property.name == "localUrl" {
+                    if property.name == "localFilename" {
                         self?.setImage(from: drawing)
                     }
                 }

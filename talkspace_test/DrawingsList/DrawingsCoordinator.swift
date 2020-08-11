@@ -160,14 +160,16 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         }
     }
 
-    private func removeImage(at path: String) {
-        guard let url = URL(string: path) else {
-            assertionFailure("Failed to construct URL for local filepath at: \(path)")
+    private func removeImage(withFilename filename: String) {
+        let fileManager = FileManager.default
+        let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+
+        guard let localUrl = documentsPath?.appendingPathComponent(filename) else {
+            assertionFailure("Failed to construct URL for local filepath at: \(filename)")
             return
         }
 
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: url)
+        try? fileManager.removeItem(at: localUrl)
     }
 
     private func update(drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
@@ -177,14 +179,14 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         drawing.steps.append(objectsIn: steps)
 
         // Remove the current image.
-        if let currentImageUrl = drawing.image?.localUrl {
-            removeImage(at: currentImageUrl)
+        if let currentImageFilename = drawing.image?.localFilename {
+            removeImage(withFilename: currentImageFilename)
         }
 
         // Store the new image if we have one.
         if let imageLocalUrl = storeImage(image: image) {
             let img = Image()
-            img.localUrl = imageLocalUrl.absoluteString
+            img.localFilename = imageLocalUrl.lastPathComponent
             drawing.image = img
         }
     }

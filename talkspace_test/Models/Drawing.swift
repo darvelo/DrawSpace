@@ -15,7 +15,7 @@ class Image: Object {
     @objc dynamic var smallUrl: String = ""
     @objc dynamic var mediumUrl: String = ""
     @objc dynamic var largeUrl: String = ""
-    @objc dynamic var localUrl: String = ""
+    @objc dynamic var localFilename: String = ""
 }
 
 class Color: Object {
@@ -122,10 +122,13 @@ class Drawing: Object {
 
 extension Drawing {
     var localImageData: Data? {
-        guard let imageLocalUrl = image?.localUrl,
-            !imageLocalUrl.isEmpty,
-            let url = URL(string: imageLocalUrl),
-            let data = try? Data(contentsOf: url) else {
+        let fileManager = FileManager.default
+        let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+
+        guard let image = image,
+            !image.localFilename.isEmpty,
+            let imageUrl = documentsPath?.appendingPathComponent(image.localFilename),
+            let data = try? Data(contentsOf: imageUrl) else {
                 return nil
         }
         
