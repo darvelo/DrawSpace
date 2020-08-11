@@ -31,10 +31,43 @@ class Point: Object {
 }
 
 class DrawStep: Object {
-    @objc dynamic var strokeWidth: Double = 1
+    @objc dynamic var strokeWidth: Double = 16
     @objc dynamic var color: Color? = Color()
     @objc dynamic var start: Point? = Point()
     @objc dynamic var end: Point? = nil
+}
+
+extension DrawStep {
+    var cgColor: CGColor {
+        guard let stepColor = color else {
+            assertionFailure("Missing step color")
+            return UIColor.white.cgColor
+        }
+
+        let uiColor = UIColor(red: CGFloat(stepColor.red),
+                              green: CGFloat(stepColor.green),
+                              blue: CGFloat(stepColor.blue),
+                              alpha: CGFloat(stepColor.alpha))
+
+        return uiColor.cgColor
+    }
+
+    var startPoint: CGPoint {
+        guard let point = start else {
+            assertionFailure("Failed to get start point from DrawStep")
+            return .zero
+        }
+
+        return CGPoint(x: point.x, y: point.y)
+    }
+
+    var endPoint: CGPoint? {
+        guard let point = end else {
+            return nil
+        }
+
+        return CGPoint(x: point.x, y: point.y)
+    }
 }
 
 class Drawing: Object {
