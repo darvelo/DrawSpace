@@ -21,8 +21,8 @@ class DrawingCell: UITableViewCell {
     private lazy var drawingImageView: UIImageView = {
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .blue
-        view.contentMode = .scaleAspectFill
+        view.backgroundColor = .white
+        view.contentMode = .scaleAspectFit
         return view
     }()
     
