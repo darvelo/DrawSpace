@@ -23,6 +23,13 @@ class DrawingCell: UITableViewCell {
         formatter.timeStyle = .short
         return formatter
     }()
+    private lazy var numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.decimal
+        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }()
     
     private lazy var drawingImageView: UIImageView = {
         let view = UIImageView()
@@ -114,7 +121,8 @@ class DrawingCell: UITableViewCell {
     
     func configure(drawing: Drawing) {
         let formattedDate = dateFormatter.string(from: drawing.createdAt)
-        labelView.text = "Created: \(formattedDate)\nDraw duration: \(drawing.drawingDurationSeconds)"
+        let formattedDuration = numberFormatter.string(from: NSNumber(value: drawing.drawingDurationSeconds)) ?? "unknown"
+        labelView.text = "Created: \(formattedDate)\(formattedDuration.isEmpty ? "" : "\nDraw duration: \(formattedDuration)")"
         observeNoteUploadState(drawing: drawing)
         setImage(from: drawing)
         setUploadState(state: drawing.uploadState)
