@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2339121693A390BBA399E5C5 /* Pods_DrawSpace.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74795AB196401D086F574B11 /* Pods_DrawSpace.framework */; };
 		552AE51424E25C8D001021E4 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552AE51324E25C8D001021E4 /* DrawView.swift */; };
 		552AE51624E260DC001021E4 /* Collection+SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552AE51524E260DC001021E4 /* Collection+SafeIndex.swift */; };
 		5546E15E24E2122500AC2253 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5546E15D24E2122500AC2253 /* Store.swift */; };
@@ -26,12 +27,12 @@
 		55721CCD24E20C9D00C39B9A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55721CCB24E20C9D00C39B9A /* LaunchScreen.storyboard */; };
 		55721CD624E20E6800C39B9A /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721CD524E20E6800C39B9A /* Coordinator.swift */; };
 		55721CD824E20E8600C39B9A /* RootCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721CD724E20E8600C39B9A /* RootCoordinator.swift */; };
-		D4EBB4F4ADAC226F7829609D /* Pods_talkspace_test.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A9D50FB1C8C309E8F5FDC51 /* Pods_talkspace_test.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		25DB24BE7A21D9A7AB943E33 /* Pods-DrawSpace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrawSpace.debug.xcconfig"; path = "Target Support Files/Pods-DrawSpace/Pods-DrawSpace.debug.xcconfig"; sourceTree = "<group>"; };
 		2BAC5FB3E9B35F5981A15FE5 /* Pods-talkspace_test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-talkspace_test.debug.xcconfig"; path = "Target Support Files/Pods-talkspace_test/Pods-talkspace_test.debug.xcconfig"; sourceTree = "<group>"; };
-		4A9D50FB1C8C309E8F5FDC51 /* Pods_talkspace_test.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_talkspace_test.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		35B14195452BEE7FCDEEEA02 /* Pods-DrawSpace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrawSpace.release.xcconfig"; path = "Target Support Files/Pods-DrawSpace/Pods-DrawSpace.release.xcconfig"; sourceTree = "<group>"; };
 		4F22F067909BE698F8963A80 /* Pods-talkspace_test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-talkspace_test.release.xcconfig"; path = "Target Support Files/Pods-talkspace_test/Pods-talkspace_test.release.xcconfig"; sourceTree = "<group>"; };
 		552AE51324E25C8D001021E4 /* DrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
 		552AE51524E260DC001021E4 /* Collection+SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+SafeIndex.swift"; sourceTree = "<group>"; };
@@ -48,13 +49,14 @@
 		5561A33424E21E8D009553D8 /* ActivityIndicatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorViewController.swift; sourceTree = "<group>"; };
 		5561A33624E2461D009553D8 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
 		5561A33824E24BA2009553D8 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		55721CBD24E20C9A00C39B9A /* talkspace_test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = talkspace_test.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		55721CBD24E20C9A00C39B9A /* DrawSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DrawSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55721CC024E20C9A00C39B9A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55721CC924E20C9D00C39B9A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		55721CCC24E20C9D00C39B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		55721CCE24E20C9D00C39B9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55721CD524E20E6800C39B9A /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		55721CD724E20E8600C39B9A /* RootCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootCoordinator.swift; sourceTree = "<group>"; };
+		74795AB196401D086F574B11 /* Pods_DrawSpace.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DrawSpace.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4EBB4F4ADAC226F7829609D /* Pods_talkspace_test.framework in Frameworks */,
+				2339121693A390BBA399E5C5 /* Pods_DrawSpace.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +74,7 @@
 		1049C2BEC548C17F0B76FA41 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4A9D50FB1C8C309E8F5FDC51 /* Pods_talkspace_test.framework */,
+				74795AB196401D086F574B11 /* Pods_DrawSpace.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -135,7 +137,7 @@
 		55721CB424E20C9A00C39B9A = {
 			isa = PBXGroup;
 			children = (
-				55721CBF24E20C9A00C39B9A /* talkspace_test */,
+				55721CBF24E20C9A00C39B9A /* DrawSpace */,
 				55721CBE24E20C9A00C39B9A /* Products */,
 				7A0A3B8361A050A584DBCDD9 /* Pods */,
 				1049C2BEC548C17F0B76FA41 /* Frameworks */,
@@ -145,12 +147,12 @@
 		55721CBE24E20C9A00C39B9A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				55721CBD24E20C9A00C39B9A /* talkspace_test.app */,
+				55721CBD24E20C9A00C39B9A /* DrawSpace.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		55721CBF24E20C9A00C39B9A /* talkspace_test */ = {
+		55721CBF24E20C9A00C39B9A /* DrawSpace */ = {
 			isa = PBXGroup;
 			children = (
 				5546E16124E2136D00AC2253 /* TODO.md */,
@@ -168,7 +170,7 @@
 				5546E16624E2141F00AC2253 /* DrawingsList */,
 				5546E16D24E2147900AC2253 /* DrawingEditor */,
 			);
-			path = talkspace_test;
+			path = DrawSpace;
 			sourceTree = "<group>";
 		};
 		7A0A3B8361A050A584DBCDD9 /* Pods */ = {
@@ -176,6 +178,8 @@
 			children = (
 				2BAC5FB3E9B35F5981A15FE5 /* Pods-talkspace_test.debug.xcconfig */,
 				4F22F067909BE698F8963A80 /* Pods-talkspace_test.release.xcconfig */,
+				25DB24BE7A21D9A7AB943E33 /* Pods-DrawSpace.debug.xcconfig */,
+				35B14195452BEE7FCDEEEA02 /* Pods-DrawSpace.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -183,9 +187,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		55721CBC24E20C9A00C39B9A /* talkspace_test */ = {
+		55721CBC24E20C9A00C39B9A /* DrawSpace */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 55721CD124E20C9D00C39B9A /* Build configuration list for PBXNativeTarget "talkspace_test" */;
+			buildConfigurationList = 55721CD124E20C9D00C39B9A /* Build configuration list for PBXNativeTarget "DrawSpace" */;
 			buildPhases = (
 				47E3C0253401A48AC656222D /* [CP] Check Pods Manifest.lock */,
 				55721CB924E20C9A00C39B9A /* Sources */,
@@ -197,9 +201,9 @@
 			);
 			dependencies = (
 			);
-			name = talkspace_test;
+			name = DrawSpace;
 			productName = talkspace_test;
-			productReference = 55721CBD24E20C9A00C39B9A /* talkspace_test.app */;
+			productReference = 55721CBD24E20C9A00C39B9A /* DrawSpace.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -217,7 +221,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 55721CB824E20C9A00C39B9A /* Build configuration list for PBXProject "talkspace_test" */;
+			buildConfigurationList = 55721CB824E20C9A00C39B9A /* Build configuration list for PBXProject "DrawSpace" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -230,7 +234,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				55721CBC24E20C9A00C39B9A /* talkspace_test */,
+				55721CBC24E20C9A00C39B9A /* DrawSpace */,
 			);
 		};
 /* End PBXProject section */
@@ -263,7 +267,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-talkspace_test-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-DrawSpace-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -276,15 +280,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-talkspace_test/Pods-talkspace_test-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-DrawSpace/Pods-DrawSpace-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-talkspace_test/Pods-talkspace_test-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-DrawSpace/Pods-DrawSpace-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-talkspace_test/Pods-talkspace_test-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DrawSpace/Pods-DrawSpace-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -444,17 +448,17 @@
 		};
 		55721CD224E20C9D00C39B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2BAC5FB3E9B35F5981A15FE5 /* Pods-talkspace_test.debug.xcconfig */;
+			baseConfigurationReference = 25DB24BE7A21D9A7AB943E33 /* Pods-DrawSpace.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5H5G7N575G;
-				INFOPLIST_FILE = talkspace_test/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/DrawSpace/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ly.radica.talkspace-test";
+				PRODUCT_BUNDLE_IDENTIFIER = ly.radica.drawspace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -463,17 +467,17 @@
 		};
 		55721CD324E20C9D00C39B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4F22F067909BE698F8963A80 /* Pods-talkspace_test.release.xcconfig */;
+			baseConfigurationReference = 35B14195452BEE7FCDEEEA02 /* Pods-DrawSpace.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5H5G7N575G;
-				INFOPLIST_FILE = talkspace_test/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/DrawSpace/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ly.radica.talkspace-test";
+				PRODUCT_BUNDLE_IDENTIFIER = ly.radica.drawspace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -483,7 +487,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		55721CB824E20C9A00C39B9A /* Build configuration list for PBXProject "talkspace_test" */ = {
+		55721CB824E20C9A00C39B9A /* Build configuration list for PBXProject "DrawSpace" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				55721CCF24E20C9D00C39B9A /* Debug */,
@@ -492,7 +496,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		55721CD124E20C9D00C39B9A /* Build configuration list for PBXNativeTarget "talkspace_test" */ = {
+		55721CD124E20C9D00C39B9A /* Build configuration list for PBXNativeTarget "DrawSpace" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				55721CD224E20C9D00C39B9A /* Debug */,

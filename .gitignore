@@ -17,4 +17,4 @@ Session.vim
 
 # this project
 Pods
-talkspace_test.xcworkspace
+*.xcworkspace
