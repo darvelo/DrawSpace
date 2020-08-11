@@ -147,6 +147,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         guard let image = image,
             let imagePath = documentsPath?.appendingPathComponent("\(UUID()).jpg"),
             let data = image.jpegData(compressionQuality: 0.0) else {
+                assertionFailure("Failed to create image data")
                 return nil
         }
         
@@ -154,6 +155,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
             try data.write(to: imagePath)
             return imagePath
         } catch {
+            assertionFailure("Failed to write image data")
             return nil
         }
     }
@@ -177,7 +179,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         drawing.steps.append(objectsIn: steps)
 
         // Remove the current image.
-        if let currentImageFilename = drawing.image?.localFilename {
+        if let currentImageFilename = drawing.image?.localFilename, !currentImageFilename.isEmpty {
             removeImage(withFilename: currentImageFilename)
         }
 
