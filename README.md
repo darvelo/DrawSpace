@@ -5,7 +5,10 @@ $ pod install
 $ open DrawSpace.xcworkspace
 $ cd drawspace-server
 $ npm install
-$ npm run docker
+$ npm run docker:dev
+$ npm run migration:run # run this once all Docker containers are up and running
+$ npm run dc restart app # this makes the app run after the database has fully initialized
+
 ```
 
 This will run the server on localhost at port 8082. Running the app in the simulator will allow it to connect to that server (`http://localhost:8082`).
