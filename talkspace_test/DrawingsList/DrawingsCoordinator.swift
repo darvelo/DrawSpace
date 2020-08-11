@@ -196,7 +196,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     }
 
     private func updateDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
-        store.inTransaction { [weak self] in
+        store.inTransaction { [weak self] _ in
             self?.update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
         }
         persist(drawing: drawing)

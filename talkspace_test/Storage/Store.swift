@@ -13,11 +13,11 @@ protocol Store {
     var realm: Realm { get }
     var drawings: Results<Drawing> { get }
     var localDrawings: Results<Drawing> { get }
-    
+
+    func inTransaction(block: ((_ drawingsRealm: Realm) -> Void))
     func create(drawing: Drawing)
     func deleteAllDrawings()
     func delete(drawing: Drawing)
-    func inTransaction(block: (() -> Void))
     func setUploadState(for: Drawing, to: Drawing.UploadState)
     func sync(drawings: DrawingsNetworkLayer.FetchedDrawings)
     func merge(_ json: DrawingsNetworkLayer.FetchedDrawing, into: Drawing)
@@ -60,65 +60,33 @@ class LocalStore: Store {
     }
     
     // MARK: Public Methods
-    
-    func create(drawing: Drawing) {
+
+    func inTransaction(block: ((_ drawingsRealm: Realm) -> Void)) {
         guard let drawingsRealm = drawings.realm else {
             fatalError("Drawings realm unreachable")
         }
-        
+
         try! drawingsRealm.write {
-            drawingsRealm.add(drawing)
+            block(drawingsRealm)
         }
-        
+
         drawingsRealm.refresh()
+    }
+
+    func create(drawing: Drawing) {
+        inTransaction { drawingsRealm in drawingsRealm.add(drawing) }
     }
 
     func deleteAllDrawings() {
-        guard let drawingsRealm = drawings.realm else {
-            fatalError("Drawings realm unreachable")
-        }
-
-        try! drawingsRealm.write {
-            drawingsRealm.deleteAll()
-        }
-
-        drawingsRealm.refresh()
+        inTransaction { drawingsRealm in drawingsRealm.deleteAll() }
     }
 
     func delete(drawing: Drawing) {
-        guard let drawingsRealm = drawings.realm else {
-            fatalError("Drawings realm unreachable")
-        }
-
-        try! drawingsRealm.write {
-            drawingsRealm.delete(drawing)
-        }
-
-        drawingsRealm.refresh()
-    }
-
-    func inTransaction(block: (() -> Void)) {
-        guard let drawingsRealm = drawings.realm else {
-            fatalError("Drawings realm unreachable")
-        }
-
-        try! drawingsRealm.write {
-            block()
-        }
-
-        drawingsRealm.refresh()
+        inTransaction { drawingsRealm in drawingsRealm.delete(drawing) }
     }
 
     func setUploadState(for drawing: Drawing, to state: Drawing.UploadState) {
-        guard let drawingsRealm = drawings.realm else {
-            fatalError("Drawings realm unreachable")
-        }
-        
-        try! drawingsRealm.write {
-            drawing.uploadState = state.rawValue
-        }
-        
-        drawingsRealm.refresh()
+        inTransaction { drawingsRealm in drawing.uploadState = state.rawValue }
     }
     
     func sync(drawings jsonArray: DrawingsNetworkLayer.FetchedDrawings) {
