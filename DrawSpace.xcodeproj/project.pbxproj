@@ -31,9 +31,7 @@
 
 /* Begin PBXFileReference section */
 		25DB24BE7A21D9A7AB943E33 /* Pods-DrawSpace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrawSpace.debug.xcconfig"; path = "Target Support Files/Pods-DrawSpace/Pods-DrawSpace.debug.xcconfig"; sourceTree = "<group>"; };
-		2BAC5FB3E9B35F5981A15FE5 /* Pods-talkspace_test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-talkspace_test.debug.xcconfig"; path = "Target Support Files/Pods-talkspace_test/Pods-talkspace_test.debug.xcconfig"; sourceTree = "<group>"; };
 		35B14195452BEE7FCDEEEA02 /* Pods-DrawSpace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrawSpace.release.xcconfig"; path = "Target Support Files/Pods-DrawSpace/Pods-DrawSpace.release.xcconfig"; sourceTree = "<group>"; };
-		4F22F067909BE698F8963A80 /* Pods-talkspace_test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-talkspace_test.release.xcconfig"; path = "Target Support Files/Pods-talkspace_test/Pods-talkspace_test.release.xcconfig"; sourceTree = "<group>"; };
 		552AE51324E25C8D001021E4 /* DrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
 		552AE51524E260DC001021E4 /* Collection+SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+SafeIndex.swift"; sourceTree = "<group>"; };
 		5546E15D24E2122500AC2253 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -176,8 +174,6 @@
 		7A0A3B8361A050A584DBCDD9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2BAC5FB3E9B35F5981A15FE5 /* Pods-talkspace_test.debug.xcconfig */,
-				4F22F067909BE698F8963A80 /* Pods-talkspace_test.release.xcconfig */,
 				25DB24BE7A21D9A7AB943E33 /* Pods-DrawSpace.debug.xcconfig */,
 				35B14195452BEE7FCDEEEA02 /* Pods-DrawSpace.release.xcconfig */,
 			);
@@ -202,7 +198,7 @@
 			dependencies = (
 			);
 			name = DrawSpace;
-			productName = talkspace_test;
+			productName = DrawSpace;
 			productReference = 55721CBD24E20C9A00C39B9A /* DrawSpace.app */;
 			productType = "com.apple.product-type.application";
 		};

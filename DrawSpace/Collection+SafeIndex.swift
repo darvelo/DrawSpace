@@ -1,6 +1,6 @@
 //
 //  Collection+SafeIndex.swift
-//  talkspace_test
+//  DrawSpace
 //
 //  Created by David Arvelo on 8/11/20.
 //  Copyright © 2020 David Arvelo. All rights reserved.
