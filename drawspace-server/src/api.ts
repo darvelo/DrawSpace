@@ -20,6 +20,17 @@ api.get('/drawings', async (_: Request, res: Response) => {
     res.json(drawing);
 });
 
+// Delete all drawings.
+api.delete('/drawings', async (_: Request, res: Response) => {
+    const drawingRepository = getCustomRepository(DrawingRepository);
+    try {
+        await drawingRepository.deleteAll();
+        res.sendStatus(200);
+    } catch {
+        res.sendStatus(500);
+    }
+});
+
 // Get drawing.
 api.get('/drawings/:id', async (req: Request, res: Response) => {
     const { id } = req.params;

@@ -120,6 +120,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     
     func clearDrawingsTapped() {
         store.deleteAllDrawings()
+        deleteDrawingsOnTheServer()
     }
 
     func syncDrawings(completion: @escaping () -> Void) {
@@ -203,7 +204,18 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         }
         persist(drawing: drawing)
     }
-    
+
+    private func deleteDrawingsOnTheServer() {
+        drawingsNetworkLayer.deleteAll { result in
+            switch result {
+            case .success:
+                print("Deleted all drawings from the server")
+            case .failure(let err):
+                print("An error occurred deleting all drawings from the server: \(err)")
+            }
+        }
+    }
+
     private func persist(drawing: Drawing) {
         store.setUploadState(for: drawing, to: .sending)
         drawingsNetworkLayer.create(drawing: drawing) { [weak self] result in

@@ -21,6 +21,7 @@ class DrawingsNetworkLayer {
     typealias FetchedDrawings = Array<FetchedDrawing>
     typealias FetchDrawingsResult = Result<FetchedDrawings, AFError>
     typealias CreateDrawingResult = Result<FetchedDrawing, AFError>
+    typealias DeleteDrawingsResult = Result<Any, AFError>
 
     // MARK: Private Properties
     
@@ -87,6 +88,22 @@ class DrawingsNetworkLayer {
             case .failure:
                 completion(result)
             }
+        }
+    }
+
+    func deleteAll(completion: @escaping (DeleteDrawingsResult) -> Void) {
+        guard let url = URL(string: drawingsUrlPath) else { return }
+        let request = sessionManager.request(url,
+                                             method: .delete,
+                                             encoding: Alamofire.JSONEncoding())
+
+        request.response { (response) in
+            guard let err = response.error else {
+                completion(.success(()))
+                return
+            }
+
+            completion(.failure(err))
         }
     }
     
