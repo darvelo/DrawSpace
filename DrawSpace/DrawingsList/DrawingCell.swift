@@ -175,8 +175,8 @@ class DrawingCell: UITableViewCell {
     }
 
     private func setImage(from drawing: Drawing) {
-        if let smallUrl = drawing.image?.smallUrl, !smallUrl.isEmpty {
-            drawingImageView.sd_setImage(with: URL(string: smallUrl), placeholderImage: nil)
+        if let resourceUrl = drawing.image?.resourceUrl, !resourceUrl.isEmpty {
+            drawingImageView.sd_setImage(with: URL(string: resourceUrl), placeholderImage: nil)
             return
         }
         

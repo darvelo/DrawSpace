@@ -25,10 +25,15 @@ class DrawingsNetworkLayer {
     // MARK: Private Properties
     
     private let sessionManager: Alamofire.Session
-    
-    private let photoUrl = ""
-    private let drawingUrl = ""
-    
+    private let iso8601Formatter = ISO8601DateFormatter()
+
+    private lazy var imagesUrlPath = "\(DrawingsNetworkLayer.baseUrl)/image"
+    private lazy var drawingsUrlPath = "\(DrawingsNetworkLayer.baseUrl)/drawings"
+
+    // MARK: Public Properties
+
+    static let baseUrl = "http://localhost:3000"
+
     // MARK: Initialization
     
     init(sessionManager: Alamofire.Session) {
@@ -38,14 +43,14 @@ class DrawingsNetworkLayer {
     // MARK: Public Methods
     
     func upload(data: Data, completion: @escaping (Result<Dictionary<String, Any>, AFError>) -> Void) {
-        guard let url = URL(string: photoUrl) else { return }
+        guard let url = URL(string: imagesUrlPath) else { return }
         let headers: Alamofire.HTTPHeaders = [
             "Accept": "accept: application/json",
             "Content-Type": "multipart/form-data",
         ]
         
         let request = sessionManager.upload(multipartFormData: { (multipart) in
-                                                multipart.append(data, withName: "file", fileName: "file.jpg", mimeType: "image/jpg")
+                                                multipart.append(data, withName: "image", fileName: "image.jpg", mimeType: "image/jpg")
                                             },
                                             to: url,
                                             usingThreshold: UInt64(),
@@ -74,30 +79,37 @@ class DrawingsNetworkLayer {
             upload(data: data) { result in
                 switch result {
                 case .success(let json):
-                    self.persist(drawing: drawing, imageId: json["id"] as? String, completion: completion)
+                    self.persist(drawing: drawing, imageId: json["id"] as? String, imageUrl: json["url"] as? String, completion: completion)
                 case .failure:
                     completion(result)
                 }
             }
         } else {
-            persist(drawing: drawing, imageId: nil, completion: completion)
+            persist(drawing: drawing, imageId: nil, imageUrl: nil, completion: completion)
         }
     }
     
-    private func persist(drawing: Drawing, imageId: String?, completion: @escaping (CreateDrawingResult) -> Void) {
-        guard let url = URL(string: drawingUrl) else { return }
+    private func persist(drawing: Drawing, imageId: String?, imageUrl: String?, completion: @escaping (CreateDrawingResult) -> Void) {
+        guard let url = URL(string: drawingsUrlPath) else { return }
         
         let headers: Alamofire.HTTPHeaders = [
             "Accept": "accept: application/json",
             "Content-Type": "application/json",
         ]
         var parameters: Alamofire.Parameters = [
-            :
-//            "title": drawing.title,
+            "createdAt": iso8601Formatter.string(from: drawing.createdAt),
+            "drawingDurationSeconds": drawing.drawingDurationSeconds,
+            "width": drawing.width,
+            "height": drawing.height,
+            "steps": drawing.steps.toJSON(),
         ]
         
         if let imageId = imageId {
-            parameters["image_id"] = imageId
+            parameters["imageId"] = imageId
+        }
+
+        if let imageUrl = imageUrl {
+            parameters["imageUrl"] = imageUrl
         }
         
         let request = sessionManager.request(url,
@@ -126,8 +138,8 @@ class DrawingsNetworkLayer {
     }
 
     func fetchDrawings(completion: @escaping (FetchDrawingsResult) -> Void) {
-        guard let url = URL(string: drawingUrl) else {
-            let err = AFError.invalidURL(url: drawingUrl)
+        guard let url = URL(string: drawingsUrlPath) else {
+            let err = AFError.invalidURL(url: drawingsUrlPath)
             completion(.failure(err))
             return
         }
@@ -149,7 +161,6 @@ class DrawingsNetworkLayer {
                 } else {
                     let err = AFError.responseValidationFailed(reason: .customValidationFailed(error: ResponseError.invalidJsonShape))
                     result = .failure(err)
-
                 }
 
                 completion(result)
@@ -163,10 +174,16 @@ class DrawingsNetworkLayer {
     
     private func validate(drawing json: FetchedDrawing) -> Bool {
         guard let _ = json["id"] as? Int,
-            let _ = json["title"] as? String else {
+            let _ = json["createdAt"] as? String,
+            let _ = json["drawingDurationSeconds"] as? Double,
+            let _ = json["width"] as? Double,
+            let _ = json["height"] as? Double,
+            let _ = json["imageId"] as? String?,
+            let _ = json["imageUrl"] as? String?,
+            let _ = json["steps"] as? Array<[String: Any]> else {
                 return false
         }
-        
+
         return true
     }
 }

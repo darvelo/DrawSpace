@@ -24,9 +24,13 @@ protocol Store {
 }
 
 class LocalStore: Store {
-    
+
+    // MARK: Private Properties
+
+    private let iso8601Formatter = ISO8601DateFormatter()
+
     // MARK: Public Properties
-    
+
     let realm: Realm
     let drawingsSortDescriptors: [SortDescriptor] = [SortDescriptor(keyPath: "uploadState", ascending: true),
                                                      SortDescriptor(keyPath: "id", ascending: false)]
@@ -40,7 +44,7 @@ class LocalStore: Store {
         let config = Realm.Configuration(
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 13,
+            schemaVersion: 14,
 
             // Set the block which will be called automatically when opening a Realm with
             // a schema version lower than the one set above
@@ -98,10 +102,11 @@ class LocalStore: Store {
         // We could get fancy and merge the results, but this is simpler.
         let persistedDrawings = drawingsRealm.objects(Drawing.self).filter("uploadState = 'success'")
 
-        try! drawingsRealm.write { [weak self] in
+        try! drawingsRealm.write {
             drawingsRealm.delete(persistedDrawings)
-            self?.populate(drawings: jsonArray, into: drawingsRealm)
         }
+
+        populate(drawings: jsonArray)
         
         realm.refresh()
     }
@@ -111,13 +116,26 @@ class LocalStore: Store {
             fatalError("Drawings realm unreachable")
         }
         
-        guard let id = json["id"] as? Int else {
-            assertionFailure("Drawing returned from server wasn't validated")
-            return
+        guard let id = json["id"] as? Int,
+            let createdAtString = json["createdAt"] as? String,
+            let drawingDurationSeconds = json["drawingDurationSeconds"] as? Double,
+            let width = json["width"] as? Double,
+            let height = json["height"] as? Double,
+            let steps = json["steps"] as? Array<[String: Any]> else {
+                assertionFailure("Drawing returned from server wasn't validated")
+                return
         }
 
         try! drawingsRealm.write {
+            let stepList = List<DrawStep>()
+            stepList.append(objectsIn: steps.compactMap { DrawStep.fromJSON($0) })
+
             drawing.id = id
+            drawing.createdAt = iso8601Formatter.date(from: createdAtString) ?? Date()
+            drawing.drawingDurationSeconds = drawingDurationSeconds
+            drawing.width = width
+            drawing.height = height
+            drawing.steps = stepList
             drawing.uploadState = Drawing.UploadState.success.rawValue
             mergeImageJson(json, into: drawing)
         }
@@ -126,50 +144,26 @@ class LocalStore: Store {
     }
     
     private func mergeImageJson(_ drawingJson: Dictionary<String, Any>, into drawing: Drawing) {
-        if let image = drawingJson["image"] as? Dictionary<String, Any> {
-            let img = Image()
-            
-            if let id = image["id"] as? String {
-                img.id = id
-            }
-            
-            if let contentType = image["content_type"] as? String {
-                img.contentType = contentType
-            }
-            
-            if let resourceUrl = image["resource_url"] as? String {
-                img.resourceUrl = resourceUrl
-            }
-            
-            if let sizeUrls = image["size_urls"] as? Dictionary<String, String> {
-                if let smallUrl = sizeUrls["small"] {
-                    img.smallUrl = smallUrl
-                }
-                if let mediumUrl = sizeUrls["medium"] {
-                    img.mediumUrl = mediumUrl
-                }
-                if let largeUrl = sizeUrls["large"] {
-                    img.largeUrl = largeUrl
-                }
-            }
-            
-            drawing.image = img
+        guard let imageId = drawingJson["imageId"] as? String,
+            let resourceUrl = drawingJson["imageUrl"] as? String else {
+                return
         }
+
+        let img = Image()
+        img.id = imageId
+        img.resourceUrl = "\(DrawingsNetworkLayer.baseUrl)\(resourceUrl)"
+
+        drawing.image = img
     }
 
     // MARK: Private Methods
     
-    private func populate(drawings jsonArray: DrawingsNetworkLayer.FetchedDrawings, into drawingsRealm: Realm) {
+    private func populate(drawings jsonArray: DrawingsNetworkLayer.FetchedDrawings) {
         jsonArray.forEach { drawingJson in
-            guard let id = drawingJson["id"] as? Int else {
-                return
-            }
-            
             let drawing = Drawing()
-            drawing.id = id
+            merge(drawingJson, into: drawing)
             drawing.uploadState = Drawing.UploadState.success.rawValue
-            mergeImageJson(drawingJson, into: drawing)
-            drawingsRealm.add(drawing)
+            inTransaction { drawingsRealm in drawingsRealm.add(drawing) }
         }
     }
 }

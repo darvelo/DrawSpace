@@ -10,11 +10,7 @@ import RealmSwift
 
 class Image: Object {
     @objc dynamic var id: String = ""
-    @objc dynamic var contentType: String = ""
     @objc dynamic var resourceUrl: String = ""
-    @objc dynamic var smallUrl: String = ""
-    @objc dynamic var mediumUrl: String = ""
-    @objc dynamic var largeUrl: String = ""
     @objc dynamic var localFilename: String = ""
 }
 
@@ -23,6 +19,34 @@ class Color: Object {
     @objc dynamic var green: Double = 0
     @objc dynamic var blue: Double = 0
     @objc dynamic var alpha: Double = 0
+}
+
+extension Color {
+    func toJSON() -> [String: Double] {
+        return [
+            "red": red,
+            "green": green,
+            "blue": blue,
+            "alpha": alpha,
+        ]
+    }
+
+    static func fromJSON(_ json: [String: Double]) -> Color? {
+        guard let red = json["red"],
+            let green = json["green"],
+            let blue = json["blue"],
+            let alpha = json["alpha"] else {
+                assertionFailure("Failed to deserialize color from json: \(json)")
+                return nil
+        }
+
+        let color = Color()
+        color.red = red
+        color.green = green
+        color.blue = blue
+        color.alpha = alpha
+        return color
+    }
 }
 
 class Point: Object {
@@ -34,6 +58,25 @@ extension Point {
     var cgPoint: CGPoint {
         return CGPoint(x: x, y: y)
     }
+
+    func toJSON() -> [String: Double] {
+        return [
+            "x": x,
+            "y": y,
+        ]
+    }
+
+    static func fromJSON(_ json: [String: Double]) -> Point? {
+        guard let x = json["x"], let y = json["y"] else {
+            assertionFailure("Failed to deserialize point from json: \(json)")
+            return nil
+        }
+
+        let point = Point()
+        point.x = x
+        point.y = y
+        return point
+    }
 }
 
 class DrawStep: Object {
@@ -41,6 +84,43 @@ class DrawStep: Object {
     @objc dynamic var color: Color? = Color()
     @objc dynamic var strokeWidth: Double = 16
     @objc dynamic var durationMark: Double = 0
+}
+
+extension List where List.Element: Point {
+    func toJSON() -> Array<[String: Double]> {
+        return map { $0.toJSON() }
+    }
+}
+
+extension DrawStep {
+    func toJSON() -> [String: Any] {
+        return [
+            "points": points.toJSON(),
+            "color": (color ?? Color()).toJSON(),
+            "strokeWidth": strokeWidth,
+            "durationMark": durationMark,
+        ]
+    }
+
+    static func fromJSON(_ json: [String: Any]) -> DrawStep? {
+        guard let points = json["points"] as? Array<[String: Double]>,
+            let color = json["color"] as? [String: Double],
+            let strokeWidth = json["strokeWidth"] as? Double,
+            let durationMark = json["durationMark"] as? Double else {
+                assertionFailure("Failed to deserialize step from json: \(json)")
+                return nil
+        }
+
+        let pointsList = List<Point>()
+        pointsList.append(objectsIn: points.compactMap { Point.fromJSON($0) })
+
+        let step = DrawStep()
+        step.points = pointsList
+        step.color = Color.fromJSON(color)
+        step.strokeWidth = strokeWidth
+        step.durationMark = durationMark
+        return step
+    }
 }
 
 extension DrawStep {
@@ -105,6 +185,12 @@ class Drawing: Object {
     @objc dynamic var uploadState: String = UploadState.sending.rawValue
     @objc dynamic var image: Image?
     var steps = List<DrawStep>()
+}
+
+extension List where List.Element: DrawStep {
+    func toJSON() -> Array<[String: Any]> {
+        return map { $0.toJSON() }
+    }
 }
 
 extension Drawing {
