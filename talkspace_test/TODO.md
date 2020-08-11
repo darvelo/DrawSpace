@@ -1,18 +1,5 @@
 #  TODO
 
-## General
-
-* local database of drawings
-
-## Screens
-
-### Main
-
-This screen is the public list of drawings that all users created. Information that should be present for each drawing:
-
-* Creation date & time.
-* Time it took to draw (from first stroke to sending the drawing).
-
 ### Create / Edit drawing
 
 * The user should be able to change the brush’s stroke width.
@@ -21,7 +8,10 @@ This screen is the public list of drawings that all users created. Information t
 
 # DONE
 
+* local database of drawings
 * Thumbnail of the drawing itself.
 * There should be a special “Eraser” brush.
 * The user should be able to choose colors (at least five).
 * allow a user to delete their drawings
+* Creation date & time.
+* Time it took to draw (from first stroke to sending the drawing).
