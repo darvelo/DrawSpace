@@ -45,6 +45,24 @@ class ToolbarView: UIView {
         view.layer.borderWidth = colorViewBorderWidth
         return view
     }()
+
+    private lazy var purpleView: UIView = {
+        let view = UIView(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .purple
+        view.layer.borderColor = colorViewBorderColor
+        view.layer.borderWidth = colorViewBorderWidth
+        return view
+    }()
+
+    private lazy var orangeView: UIView = {
+        let view = UIView(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .orange
+        view.layer.borderColor = colorViewBorderColor
+        view.layer.borderWidth = colorViewBorderWidth
+        return view
+    }()
     
     private lazy var eraserView: UIView = {
         let view = UIView(frame: .zero)
@@ -55,7 +73,7 @@ class ToolbarView: UIView {
         return view
     }()
     
-    private lazy var colorViews = [redView, greenView, blueView, eraserView]
+    private lazy var colorViews = [redView, greenView, blueView, purpleView, orangeView, eraserView]
     
     private lazy var toolbarColorView: UIStackView = {
         let view = UIStackView(arrangedSubviews: colorViews)
@@ -82,21 +100,14 @@ class ToolbarView: UIView {
         NSLayoutConstraint.activate([
             toolbarColorView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor),
             toolbarColorView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor),
-            
-            redView.heightAnchor.constraint(equalToConstant: colorViewSize.height),
-            redView.widthAnchor.constraint(equalToConstant: colorViewSize.width),
-
-            greenView.heightAnchor.constraint(equalToConstant: colorViewSize.height),
-            greenView.widthAnchor.constraint(equalToConstant: colorViewSize.width),
-            
-            blueView.heightAnchor.constraint(equalToConstant: colorViewSize.height),
-            blueView.widthAnchor.constraint(equalToConstant: colorViewSize.width),
-            
-            eraserView.heightAnchor.constraint(equalToConstant: colorViewSize.height),
-            eraserView.widthAnchor.constraint(equalToConstant: colorViewSize.width),
         ])
         
         colorViews.forEach { view in
+            NSLayoutConstraint.activate([
+                view.heightAnchor.constraint(equalToConstant: colorViewSize.height),
+                view.widthAnchor.constraint(equalToConstant: colorViewSize.width)
+            ])
+
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(colorViewTapped))
             view.addGestureRecognizer(tapGestureRecognizer)
         }
