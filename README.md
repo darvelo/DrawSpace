@@ -1,9 +1,10 @@
 # Usage
 
-`
-npm install
-npm run docker
-`
+```
+$ cd drawspace-server
+$ npm install
+$ npm run docker
+```
 
 This will run the server on localhost at port 8082. Running the app in the simulator will allow it to connect to that server (`http://localhost:8082`).
 
