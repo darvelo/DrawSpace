@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		552AE51424E25C8D001021E4 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552AE51324E25C8D001021E4 /* DrawView.swift */; };
+		552AE51624E260DC001021E4 /* Collection+SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552AE51524E260DC001021E4 /* Collection+SafeIndex.swift */; };
 		5546E15E24E2122500AC2253 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5546E15D24E2122500AC2253 /* Store.swift */; };
 		5546E16024E212F900AC2253 /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5546E15F24E212F900AC2253 /* Context.swift */; };
 		5546E16524E213D200AC2253 /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5546E16424E213D200AC2253 /* Drawing.swift */; };
@@ -31,6 +33,8 @@
 		2BAC5FB3E9B35F5981A15FE5 /* Pods-talkspace_test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-talkspace_test.debug.xcconfig"; path = "Target Support Files/Pods-talkspace_test/Pods-talkspace_test.debug.xcconfig"; sourceTree = "<group>"; };
 		4A9D50FB1C8C309E8F5FDC51 /* Pods_talkspace_test.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_talkspace_test.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F22F067909BE698F8963A80 /* Pods-talkspace_test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-talkspace_test.release.xcconfig"; path = "Target Support Files/Pods-talkspace_test/Pods-talkspace_test.release.xcconfig"; sourceTree = "<group>"; };
+		552AE51324E25C8D001021E4 /* DrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
+		552AE51524E260DC001021E4 /* Collection+SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+SafeIndex.swift"; sourceTree = "<group>"; };
 		5546E15D24E2122500AC2253 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		5546E15F24E212F900AC2253 /* Context.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		5546E16124E2136D00AC2253 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
@@ -106,6 +110,7 @@
 			children = (
 				5546E16E24E2149600AC2253 /* DrawingEditorCoordinator.swift */,
 				5546E17024E214A000AC2253 /* DrawingEditorViewController.swift */,
+				552AE51324E25C8D001021E4 /* DrawView.swift */,
 				5561A33624E2461D009553D8 /* ToolbarView.swift */,
 			);
 			path = DrawingEditor;
@@ -155,6 +160,7 @@
 				55721CD524E20E6800C39B9A /* Coordinator.swift */,
 				5561A33424E21E8D009553D8 /* ActivityIndicatorViewController.swift */,
 				5561A33824E24BA2009553D8 /* Theme.swift */,
+				552AE51524E260DC001021E4 /* Collection+SafeIndex.swift */,
 				5546E17424E2191C00AC2253 /* Storage */,
 				5546E17524E2192800AC2253 /* Networking */,
 				5546E16324E213C800AC2253 /* Models */,
@@ -290,6 +296,7 @@
 			files = (
 				5546E16F24E2149600AC2253 /* DrawingEditorCoordinator.swift in Sources */,
 				5546E15E24E2122500AC2253 /* Store.swift in Sources */,
+				552AE51424E25C8D001021E4 /* DrawView.swift in Sources */,
 				5561A33724E2461D009553D8 /* ToolbarView.swift in Sources */,
 				5546E17124E214A000AC2253 /* DrawingEditorViewController.swift in Sources */,
 				5546E16524E213D200AC2253 /* Drawing.swift in Sources */,
@@ -303,6 +310,7 @@
 				5561A33924E24BA2009553D8 /* Theme.swift in Sources */,
 				5546E16C24E2144600AC2253 /* DrawingCell.swift in Sources */,
 				5546E16824E2142F00AC2253 /* DrawingsCoordinator.swift in Sources */,
+				552AE51624E260DC001021E4 /* Collection+SafeIndex.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

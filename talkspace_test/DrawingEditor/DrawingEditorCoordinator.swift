@@ -63,29 +63,39 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     func handleDrawTap(point: CGPoint) {
         assert(lastPanPoint == nil, "Expected lastPanPoint to be nil on draw tap")
 
-        guard let colorComponents = currentColor.cgColor.components else {
-            assertionFailure("Failed to get color components")
+        guard let step = DrawStep.from(color: currentColor.cgColor, startPoint: point, endPoint: nil) else {
+            assertionFailure("Failed to create step for draw tap event")
             return
         }
-
-        let stepColor = Color()
-        stepColor.red = Double(colorComponents[safe: 0] ?? 1)
-        stepColor.green = Double(colorComponents[safe: 1] ?? 1)
-        stepColor.blue = Double(colorComponents[safe: 2] ?? 1)
-        stepColor.alpha = Double(colorComponents[safe: 3] ?? 1)
-
-        let stepPoint = Point()
-        stepPoint.x = Double(point.x)
-        stepPoint.y = Double(point.y)
-
-        let step = DrawStep()
-        step.color = stepColor
-        step.start = stepPoint
 
         steps.append(step)
         drawingEditorViewController.update(step: step)
     }
 
     func handleDrawPan(event: DrawPanEvent) {
+        switch event {
+        case .start(let point):
+            lastPanPoint = point
+        case .move(let point):
+            guard let lastPoint = lastPanPoint,
+                let step = DrawStep.from(color: currentColor.cgColor, startPoint: lastPoint, endPoint: point) else {
+                assertionFailure("Failed to create step for pan move event")
+                return
+            }
+
+            steps.append(step)
+            lastPanPoint = point
+            drawingEditorViewController.update(step: step)
+        case .end(let point):
+            guard let lastPoint = lastPanPoint,
+                let step = DrawStep.from(color: currentColor.cgColor, startPoint: lastPoint, endPoint: point) else {
+                    assertionFailure("Failed to create step for pan move event")
+                    return
+            }
+
+            steps.append(step)
+            lastPanPoint = nil
+            drawingEditorViewController.update(step: step)
+        }
     }
 }
