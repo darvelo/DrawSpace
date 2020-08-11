@@ -5,7 +5,7 @@ export default class Drawing {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('date')
+    @Column()
     createdAt: string;
 
     @Column('double')
