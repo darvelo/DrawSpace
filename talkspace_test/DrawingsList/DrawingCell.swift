@@ -17,6 +17,12 @@ class DrawingCell: UITableViewCell {
     
     private var realmNotificationToken: NotificationToken?
     private var realmImageNotificationToken: NotificationToken?
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter
+    }()
     
     private lazy var drawingImageView: UIImageView = {
         let view = UIImageView()
@@ -107,7 +113,8 @@ class DrawingCell: UITableViewCell {
     // MARK: Public Methods
     
     func configure(drawing: Drawing) {
-        labelView.text = "Created: \(drawing.createdAt)"
+        let formattedDate = dateFormatter.string(from: drawing.createdAt)
+        labelView.text = "Created: \(formattedDate)\nDraw duration: \(drawing.drawingDurationSeconds)"
         observeNoteUploadState(drawing: drawing)
         setImage(from: drawing)
         setUploadState(state: drawing.uploadState)
