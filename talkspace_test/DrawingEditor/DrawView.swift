@@ -22,7 +22,7 @@ class DrawView: UIView {
 
     // MARK: Public Methods
 
-    func draw(step: DrawStep, imageBuffer: UIImage?) -> UIImage? {
+    func draw(steps: [DrawStep], imageBuffer: UIImage?) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(bounds.size, true, 0)
 
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -38,10 +38,12 @@ class DrawView: UIView {
             imageBuffer.draw(in: bounds)
         }
 
-        if step.end == nil {
-            drawDot(step, in: context)
-        } else {
-            drawLine(step, in: context)
+        for step in steps {
+            if step.end == nil {
+                drawDot(step, in: context)
+            } else {
+                drawLine(step, in: context)
+            }
         }
 
         // Grab updated buffer and return it

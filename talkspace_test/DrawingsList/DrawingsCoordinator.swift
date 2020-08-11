@@ -76,19 +76,39 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         // TODO: We shouldn't assume we're in a UINavigationController.
         rootViewController.navigationController?.popViewController(animated: true)
         drawingEditorCoordinator = nil
-        
+
+        var handler: (() -> Void)? = nil
+
         switch event {
         case .cancel:
             break
-        case .done(let image):
-            // Create the drawing once the navigation controller puts the rootViewController's view
-            // into the view hierarchy. This ensures the tableView won't try to update offscreen and give a warning.
-            // Solution from: https://stackoverflow.com/a/50532891/544252
-            //
-            // TODO: We shouldn't assume we're in a UINavigationController.
-            rootViewController.navigationController?.transitionCoordinator?.animate(alongsideTransition: nil) { [weak self] _ in
-                self?.createDrawing(image: image)
+        case let .create(drawing, canvasSize, duration, steps, image):
+            handler = { [weak self] in
+                self?.createDrawing(drawing,
+                                    canvasSize: canvasSize,
+                                    duration: duration,
+                                    steps: steps,
+                                    image: image)
             }
+        case let .update(drawing, canvasSize, duration, steps, image):
+            handler = { [weak self] in
+                self?.updateDrawing(drawing,
+                                    canvasSize: canvasSize,
+                                    duration: duration,
+                                    steps: steps,
+                                    image: image)
+            }
+        }
+
+        guard let eventHandler = handler else { return }
+
+        // Create the drawing once the navigation controller puts the rootViewController's view
+        // into the view hierarchy. This ensures the tableView won't try to update offscreen and give a warning.
+        // Solution from: https://stackoverflow.com/a/50532891/544252
+        //
+        // TODO: We shouldn't assume we're in a UINavigationController.
+        rootViewController.navigationController?.transitionCoordinator?.animate(alongsideTransition: nil) { [weak self] _ in
+            eventHandler()
         }
     }
     
@@ -113,8 +133,11 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     }
     
     func drawingTapped(_ drawing: Drawing) {
-        guard Drawing.UploadState(rawValue: drawing.uploadState) != .success else { return }
-        persist(drawing: drawing)
+        if Drawing.UploadState(rawValue: drawing.uploadState) != .success {
+            persist(drawing: drawing)
+        }
+
+        presentDrawing(drawing: drawing)
     }
     
     // MARK: Private Methods
@@ -136,17 +159,46 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
             return nil
         }
     }
-    
-    private func createDrawing(image: UIImage?) {
-        let drawing = Drawing()
 
+    private func removeImage(at path: String) {
+        guard let url = URL(string: path) else {
+            assertionFailure("Failed to construct URL for local filepath at: \(path)")
+            return
+        }
+
+        let fileManager = FileManager.default
+        try? fileManager.removeItem(at: url)
+    }
+
+    private func update(drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
+        drawing.height = Double(canvasSize.height)
+        drawing.width = Double(canvasSize.width)
+        drawing.drawingDurationSeconds = duration
+        drawing.steps.append(objectsIn: steps)
+
+        // Remove the current image.
+        if let currentImageUrl = drawing.image?.localUrl {
+            removeImage(at: currentImageUrl)
+        }
+
+        // Store the new image if we have one.
         if let imageLocalUrl = storeImage(image: image) {
             let img = Image()
             img.localUrl = imageLocalUrl.absoluteString
             drawing.image = img
         }
+    }
 
+    private func createDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
+        update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
         store.create(drawing: drawing)
+        persist(drawing: drawing)
+    }
+
+    private func updateDrawing(_ drawing: Drawing, canvasSize: CGSize, duration: Int, steps: [DrawStep], image: UIImage?) {
+        store.inTransaction { [weak self] in
+            self?.update(drawing: drawing, canvasSize: canvasSize, duration: duration, steps: steps, image: image)
+        }
         persist(drawing: drawing)
     }
     

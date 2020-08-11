@@ -86,6 +86,11 @@ class DrawingsViewController: UIViewController, UITableViewDelegate, UITableView
     // MARK: Public Methods
     
     func update(_ changes: RealmCollectionChange<Results<Drawing>>) {
+        // Update the list once the navigation controller puts this ViewController's view
+        // into the view hierarchy. This ensures the tableView won't try to update offscreen and give a warning.
+        // Solution from: https://stackoverflow.com/a/50532891/544252
+        guard view.superview != nil else { return }
+
         switch changes {
         case .initial:
             // Results are now populated and can be accessed without blocking the UI

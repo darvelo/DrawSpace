@@ -112,9 +112,9 @@ class Drawing: Object {
     
     @objc dynamic var id: Int = -1
     @objc dynamic var createdAt = Date()
-    @objc dynamic var width: Int = 0
-    @objc dynamic var height: Int = 0
     @objc dynamic var drawingDurationSeconds: Int = 0
+    @objc dynamic var width: Double = 0
+    @objc dynamic var height: Double = 0
     @objc dynamic var uploadState: String = UploadState.sending.rawValue
     @objc dynamic var image: Image?
     var steps = List<DrawStep>()

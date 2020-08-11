@@ -7,10 +7,20 @@
 //
 
 import UIKit
+import RealmSwift
 
 enum DrawingEditorCoordinatorEvent {
     case cancel
-    case done(image: UIImage?)
+    case create(drawing: Drawing,
+                canvasSize: CGSize,
+                duration: Int,
+                steps: [DrawStep],
+                image: UIImage?)
+    case update(drawing: Drawing,
+                canvasSize: CGSize,
+                duration: Int,
+                steps: [DrawStep],
+                image: UIImage?)
 }
 
 protocol DrawingEditorCoordinatorDelegate: class {
@@ -21,10 +31,22 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
 
     // MARK: Private Properties
 
+    private let store: Store
+    private let isUpdate: Bool
+
     private var currentColor = UIColor.red
     private var lastPanPoint: CGPoint?
+    private var startedAt = Date()
+
+    private var createdAt = Date()
+    private var drawingDurationSeconds = 0
     private var steps = [DrawStep]()
-    
+    private lazy var drawing: Drawing = {
+        let model = Drawing()
+        model.createdAt = createdAt
+        return model
+    }()
+
     private lazy var drawingEditorViewController: DrawingEditorViewController = {
         let vc = DrawingEditorViewController()
         vc.delegate = self
@@ -38,8 +60,17 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     
     // MARK: Initialization
     
-    init(drawing: Drawing?) {
-        drawingEditorViewController.update(drawing: drawing)
+    init(store: Store, drawing: Drawing?) {
+        self.store = store
+        self.isUpdate = drawing != nil
+
+        if let drawing = drawing {
+            self.steps = Array(drawing.steps)
+            self.createdAt = drawing.createdAt
+            self.drawingDurationSeconds = drawing.drawingDurationSeconds
+            self.drawing = drawing
+            drawingEditorViewController.update(drawing: drawing)
+        }
     }
     
     // MARK: Coordinator
@@ -52,8 +83,27 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
         delegate?.handleDrawingEditorCoordinatorEvent(.cancel)
     }
     
-    func doneTapped(image: UIImage?) {
-        delegate?.handleDrawingEditorCoordinatorEvent(.done(image: image))
+    func doneTapped(image: UIImage?, canvasSize: CGSize) {
+        let event: DrawingEditorCoordinatorEvent
+        let sessionDuration = Int(Date().timeIntervalSince(startedAt))
+
+        if isUpdate {
+            let duration = drawing.drawingDurationSeconds + sessionDuration
+            event = .update(drawing: drawing,
+                            canvasSize: canvasSize,
+                            duration: duration,
+                            steps: steps,
+                            image: image)
+        } else {
+            let duration = sessionDuration
+            event = .create(drawing: drawing,
+                            canvasSize: canvasSize,
+                            duration: duration,
+                            steps: steps,
+                            image: image)
+        }
+
+        delegate?.handleDrawingEditorCoordinatorEvent(event)
     }
 
     func handleColorChange(color: UIColor) {

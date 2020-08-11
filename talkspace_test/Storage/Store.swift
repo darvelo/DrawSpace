@@ -15,6 +15,7 @@ protocol Store {
     var localDrawings: Results<Drawing> { get }
     
     func create(drawing: Drawing)
+    func inTransaction(block: (() -> Void))
     func setUploadState(for: Drawing, to: Drawing.UploadState)
     func sync(drawings: DrawingsNetworkLayer.FetchedDrawings)
     func merge(_ json: DrawingsNetworkLayer.FetchedDrawing, into: Drawing)
@@ -26,7 +27,7 @@ class LocalStore: Store {
     
     let realm: Realm
     let drawingsSortDescriptors: [SortDescriptor] = [SortDescriptor(keyPath: "uploadState", ascending: true),
-                                                  SortDescriptor(keyPath: "id", ascending: false)]
+                                                     SortDescriptor(keyPath: "id", ascending: false)]
     
     private(set) lazy var drawings = realm.objects(Drawing.self).sorted(by: drawingsSortDescriptors)
     private(set) lazy var localDrawings = realm.objects(Drawing.self).filter("uploadState = 'failed'")
@@ -37,7 +38,7 @@ class LocalStore: Store {
         let config = Realm.Configuration(
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 9,
+            schemaVersion: 10,
 
             // Set the block which will be called automatically when opening a Realm with
             // a schema version lower than the one set above
@@ -69,7 +70,19 @@ class LocalStore: Store {
         
         drawingsRealm.refresh()
     }
-    
+
+    func inTransaction(block: (() -> Void)) {
+        guard let drawingsRealm = drawings.realm else {
+            fatalError("Drawings realm unreachable")
+        }
+
+        try! drawingsRealm.write {
+            block()
+        }
+
+        drawingsRealm.refresh()
+    }
+
     func setUploadState(for drawing: Drawing, to state: Drawing.UploadState) {
         guard let drawingsRealm = drawings.realm else {
             fatalError("Drawings realm unreachable")

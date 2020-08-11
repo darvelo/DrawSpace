@@ -16,7 +16,7 @@ enum DrawPanEvent {
 
 protocol DrawingEditorViewControllerDelegate: class {
     func cancelTapped()
-    func doneTapped(image: UIImage?)
+    func doneTapped(image: UIImage?, canvasSize: CGSize)
     func handleDrawTap(point: CGPoint)
     func handleColorChange(color: UIColor)
     func handleDrawPan(event: DrawPanEvent)
@@ -26,6 +26,7 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
 
     // MARK: Private Poperties
 
+    private var drawing: Drawing?
     private var imageBuffer: UIImage?
 
     private lazy var imageView: UIImageView = {
@@ -100,6 +101,11 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
         drawView.addGestureRecognizer(panGestureRecognizer)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        drawSteps()
+    }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         delegate?.cancelTapped()
@@ -113,13 +119,27 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
 
     // MARK: Public Methods
 
-    func update(drawing: Drawing?) {
+    func update(drawing: Drawing) {
+        self.drawing = drawing
     }
 
     func update(step: DrawStep) {
         autoreleasepool { [weak self] in
             guard let strongSelf = self else { return }
-            let buffer = strongSelf.drawView.draw(step: step, imageBuffer: strongSelf.imageBuffer)
+            let buffer = strongSelf.drawView.draw(steps: [step], imageBuffer: strongSelf.imageBuffer)
+            strongSelf.imageBuffer = buffer
+            strongSelf.imageView.image = buffer
+        }
+    }
+
+    // MARK: Private Methods
+
+    private func drawSteps() {
+        guard let drawing = drawing else { return }
+
+        autoreleasepool { [weak self] in
+            guard let strongSelf = self else { return }
+            let buffer = strongSelf.drawView.draw(steps: Array(drawing.steps), imageBuffer: strongSelf.imageBuffer)
             strongSelf.imageBuffer = buffer
             strongSelf.imageView.image = buffer
         }
@@ -132,7 +152,7 @@ class DrawingEditorViewController: UIViewController, ToolbarViewDelegate {
     }
 
     @objc private func doneTapped() {
-        delegate?.doneTapped(image: nil)
+        delegate?.doneTapped(image: imageBuffer, canvasSize: view.bounds.size)
     }
 
     @objc private func handleTap(sender: UITapGestureRecognizer) {

@@ -50,7 +50,8 @@ class Context {
     }
     
     private lazy var drawingEditorCoordinatorFactory: DrawingEditorCoordinatorFactory = { (_ drawing: Drawing?) in
-        let coordinator = DrawingEditorCoordinator(drawing: drawing)
+        let coordinator = DrawingEditorCoordinator(store: self.store,
+                                                   drawing: drawing)
         return coordinator
     }
 }
