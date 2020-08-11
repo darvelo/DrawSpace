@@ -31,7 +31,7 @@ class Point: Object {
 }
 
 class DrawStep: Object {
-    @objc dynamic var strokeWidth: Int = 1
+    @objc dynamic var strokeWidth: Double = 1
     @objc dynamic var color: Color? = Color()
     @objc dynamic var start: Point? = Point()
     @objc dynamic var end: Point? = nil
