@@ -107,7 +107,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
         // Solution from: https://stackoverflow.com/a/50532891/544252
         //
         // TODO: We shouldn't assume we're in a UINavigationController.
-        rootViewController.navigationController?.transitionCoordinator?.animate(alongsideTransition: nil) { [weak self] _ in
+        rootViewController.navigationController?.transitionCoordinator?.animate(alongsideTransition: nil) { _ in
             eventHandler()
         }
     }

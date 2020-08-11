@@ -30,11 +30,17 @@ class Point: Object {
     @objc dynamic var y: Double = 0
 }
 
+extension Point {
+    var cgPoint: CGPoint {
+        return CGPoint(x: x, y: y)
+    }
+}
+
 class DrawStep: Object {
-    @objc dynamic var strokeWidth: Double = 16
+    var points = List<Point>()
     @objc dynamic var color: Color? = Color()
-    @objc dynamic var start: Point? = Point()
-    @objc dynamic var end: Point? = nil
+    @objc dynamic var strokeWidth: Double = 16
+    @objc dynamic var durationMark: Int = 0
 }
 
 extension DrawStep {
@@ -52,24 +58,9 @@ extension DrawStep {
         return uiColor.cgColor
     }
 
-    var startPoint: CGPoint {
-        guard let point = start else {
-            assertionFailure("Failed to get start point from DrawStep")
-            return .zero
-        }
+    static func from(color: CGColor, strokeWidth: Double, durationMark: Int, points: [CGPoint]) -> DrawStep? {
+        assert(points.count > 0, "Expected there to be more than zero points")
 
-        return CGPoint(x: point.x, y: point.y)
-    }
-
-    var endPoint: CGPoint? {
-        guard let point = end else {
-            return nil
-        }
-
-        return CGPoint(x: point.x, y: point.y)
-    }
-
-    static func from(color: CGColor, strokeWidth: Double, startPoint: CGPoint, endPoint: CGPoint?) -> DrawStep? {
         guard let colorComponents = color.components else {
             assertionFailure("Failed to get color components")
             return nil
@@ -81,24 +72,19 @@ extension DrawStep {
         stepColor.blue = Double(colorComponents[safe: 2] ?? 1)
         stepColor.alpha = Double(colorComponents[safe: 3] ?? 1)
 
-        let start = Point()
-        start.x = Double(startPoint.x)
-        start.y = Double(startPoint.y)
-
-
-        var end: Point?
-        if let endPoint = endPoint {
+        var stepPoints = [Point]()
+        for point in points {
             let temp = Point()
-            temp.x = Double(endPoint.x)
-            temp.y = Double(endPoint.y)
-            end = temp
+            temp.x = Double(point.x)
+            temp.y = Double(point.y)
+            stepPoints.append(temp)
         }
 
         let step = DrawStep()
-        step.strokeWidth = strokeWidth
         step.color = stepColor
-        step.start = start
-        step.end = end
+        step.strokeWidth = strokeWidth
+        step.durationMark = durationMark
+        step.points.append(objectsIn: stepPoints)
 
         return step
     }

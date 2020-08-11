@@ -36,7 +36,7 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
 
     private var currentColor = UIColor.red
     private var currentStrokeWidth: Double = 16
-    private var lastPanPoint: CGPoint?
+    private var panPoints: [CGPoint]?
     private var startedAt = Date()
 
     private var createdAt = Date()
@@ -86,20 +86,16 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     
     func doneTapped(image: UIImage?, canvasSize: CGSize) {
         let event: DrawingEditorCoordinatorEvent
-        let sessionDuration = Int(Date().timeIntervalSince(startedAt))
-
         if isUpdate {
-            let duration = drawing.drawingDurationSeconds + sessionDuration
             event = .update(drawing: drawing,
                             canvasSize: canvasSize,
-                            duration: duration,
+                            duration: durationMark(),
                             steps: steps,
                             image: image)
         } else {
-            let duration = sessionDuration
             event = .create(drawing: drawing,
                             canvasSize: canvasSize,
-                            duration: duration,
+                            duration: durationMark(),
                             steps: steps,
                             image: image)
         }
@@ -116,12 +112,12 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     }
 
     func handleDrawTap(point: CGPoint) {
-        assert(lastPanPoint == nil, "Expected lastPanPoint to be nil on draw tap")
+        assert(panPoints == nil, "Expected lastPanPoint to be nil on draw tap")
 
         guard let step = DrawStep.from(color: currentColor.cgColor,
                                        strokeWidth: currentStrokeWidth,
-                                       startPoint: point,
-                                       endPoint: nil) else {
+                                       durationMark: durationMark(),
+                                       points: [point]) else {
             assertionFailure("Failed to create step for draw tap event")
             return
         }
@@ -133,33 +129,71 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
     func handleDrawPan(event: DrawPanEvent) {
         switch event {
         case .start(let point):
-            lastPanPoint = point
+            panPoints = [point]
         case .move(let point):
-            guard let lastPoint = lastPanPoint,
-                let step = DrawStep.from(color: currentColor.cgColor,
-                                         strokeWidth: currentStrokeWidth,
-                                         startPoint: lastPoint,
-                                         endPoint: point) else {
-                assertionFailure("Failed to create step for pan move event")
+            assert(panPoints != nil, "Expected panPoints to be non-nil")
+            assert(panPoints!.count >= 1, "Expected to have more than one pan point")
+
+            guard let lastPanPoint = panPoints?.last else {
+                assertionFailure("Expected to have a previous pan point")
+                return
+            }
+            panPoints?.append(point)
+
+            guard let intermediateStep = DrawStep.from(color: currentColor.cgColor,
+                                                       strokeWidth: currentStrokeWidth,
+                                                       durationMark: durationMark(),
+                                                       points: [lastPanPoint, point]) else {
+                assertionFailure("Failed to create intermediate step for pan move event")
                 return
             }
 
-            steps.append(step)
-            lastPanPoint = point
-            drawingEditorViewController.update(step: step)
+            drawingEditorViewController.update(step: intermediateStep)
         case .end(let point):
-            guard let lastPoint = lastPanPoint,
-                let step = DrawStep.from(color: currentColor.cgColor,
-                                         strokeWidth: currentStrokeWidth,
-                                         startPoint: lastPoint,
-                                         endPoint: point) else {
-                    assertionFailure("Failed to create step for pan move event")
-                    return
+            assert(panPoints != nil, "Expected panPoints to be non-nil")
+            assert(panPoints!.count > 1, "Expected to have more than one pan point")
+
+            let duration = durationMark()
+
+            guard let lastPanPoint = panPoints?.last else {
+                assertionFailure("Expected to have a previous pan point")
+                return
             }
 
+            panPoints?.append(point)
+
+            guard let intermediateStep = DrawStep.from(color: currentColor.cgColor,
+                                                       strokeWidth: currentStrokeWidth,
+                                                       durationMark: duration,
+                                                       points: [lastPanPoint, point]) else {
+                assertionFailure("Failed to create intermediate step for pan end event")
+                return
+            }
+
+            guard let points = panPoints else {
+                assertionFailure("Expected panPoints to be non-nil")
+                return
+            }
+
+            guard let step = DrawStep.from(color: currentColor.cgColor,
+                                           strokeWidth: currentStrokeWidth,
+                                           durationMark: duration,
+                                           points: points) else {
+                assertionFailure("Failed to create step for pan end event")
+                return
+            }
+
+            drawingEditorViewController.update(step: intermediateStep)
             steps.append(step)
-            lastPanPoint = nil
-            drawingEditorViewController.update(step: step)
+            panPoints = nil
         }
+    }
+
+    // MARK: Private Methods
+
+    func durationMark() -> Int {
+        let sessionDuration = Int(Date().timeIntervalSince(startedAt))
+        let durationMark = drawing.drawingDurationSeconds + sessionDuration
+        return durationMark
     }
 }
