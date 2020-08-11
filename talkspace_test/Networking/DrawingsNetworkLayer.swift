@@ -92,7 +92,8 @@ class DrawingsNetworkLayer {
             "Content-Type": "application/json",
         ]
         var parameters: Alamofire.Parameters = [
-            "title": drawing.title,
+            :
+//            "title": drawing.title,
         ]
         
         if let imageId = imageId {

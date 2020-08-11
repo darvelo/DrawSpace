@@ -107,7 +107,7 @@ class DrawingCell: UITableViewCell {
     // MARK: Public Methods
     
     func configure(drawing: Drawing) {
-        labelView.text = drawing.title
+        labelView.text = "Created: \(drawing.createdAt)"
         observeNoteUploadState(drawing: drawing)
         setImage(from: drawing)
         setUploadState(state: drawing.uploadState)

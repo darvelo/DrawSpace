@@ -37,7 +37,7 @@ class LocalStore: Store {
         let config = Realm.Configuration(
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 5,
+            schemaVersion: 8,
 
             // Set the block which will be called automatically when opening a Realm with
             // a schema version lower than the one set above
@@ -104,15 +104,13 @@ class LocalStore: Store {
             fatalError("Drawings realm unreachable")
         }
         
-        guard let id = json["id"] as? Int,
-            let title = json["title"] as? String else {
-                assertionFailure("Drawing returned from server wasn't validated")
-                return
+        guard let id = json["id"] as? Int else {
+            assertionFailure("Drawing returned from server wasn't validated")
+            return
         }
 
         try! drawingsRealm.write {
             drawing.id = id
-            drawing.title = title
             drawing.uploadState = Drawing.UploadState.success.rawValue
             mergeImageJson(json, into: drawing)
         }
@@ -156,14 +154,12 @@ class LocalStore: Store {
     
     private func populate(drawings jsonArray: DrawingsNetworkLayer.FetchedDrawings, into drawingsRealm: Realm) {
         jsonArray.forEach { drawingJson in
-            guard let id = drawingJson["id"] as? Int,
-                let title = drawingJson["title"] as? String else {
-                    return
+            guard let id = drawingJson["id"] as? Int else {
+                return
             }
             
             let drawing = Drawing()
             drawing.id = id
-            drawing.title = title
             drawing.uploadState = Drawing.UploadState.success.rawValue
             mergeImageJson(drawingJson, into: drawing)
             drawingsRealm.add(drawing)

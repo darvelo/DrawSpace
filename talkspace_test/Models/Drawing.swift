@@ -18,6 +18,25 @@ class Image: Object {
     @objc dynamic var localUrl: String = ""
 }
 
+class Color: Object {
+    @objc dynamic var red: Double = 0
+    @objc dynamic var green: Double = 0
+    @objc dynamic var blue: Double = 0
+    @objc dynamic var alpha: Double = 0
+}
+
+class Point: Object {
+    @objc dynamic var x: Double = 0
+    @objc dynamic var y: Double = 0
+}
+
+class DrawStep: Object {
+    @objc dynamic var strokeWidth: Int = 1
+    @objc dynamic var color: Color? = Color()
+    @objc dynamic var start: Point? = Point()
+    @objc dynamic var end: Point? = nil
+}
+
 class Drawing: Object {
     enum UploadState: String {
         case sending
@@ -26,10 +45,13 @@ class Drawing: Object {
     }
     
     @objc dynamic var id: Int = -1
-    @objc dynamic var title = ""
     @objc dynamic var createdAt = Date()
+    @objc dynamic var width: Int = 0
+    @objc dynamic var height: Int = 0
+    @objc dynamic var drawingDurationSeconds: Int = 0
     @objc dynamic var uploadState: String = UploadState.sending.rawValue
     @objc dynamic var image: Image?
+    var steps = List<DrawStep>()
 }
 
 extension Drawing {
