@@ -79,17 +79,17 @@ extension Point {
     }
 }
 
+extension List where List.Element: Point {
+    func toJSON() -> Array<[String: Double]> {
+        return map { $0.toJSON() }
+    }
+}
+
 class DrawStep: Object {
     var points = List<Point>()
     @objc dynamic var color: Color? = Color()
     @objc dynamic var strokeWidth: Double = 16
     @objc dynamic var durationMark: Double = 0
-}
-
-extension List where List.Element: Point {
-    func toJSON() -> Array<[String: Double]> {
-        return map { $0.toJSON() }
-    }
 }
 
 extension DrawStep {
@@ -124,10 +124,10 @@ extension DrawStep {
 }
 
 extension DrawStep {
-    var cgColor: CGColor {
+    var cgColor: CGColor? {
         guard let stepColor = color else {
             assertionFailure("Missing step color")
-            return UIColor.white.cgColor
+            return nil
         }
 
         let uiColor = UIColor(red: CGFloat(stepColor.red),
@@ -170,6 +170,12 @@ extension DrawStep {
     }
 }
 
+extension List where List.Element: DrawStep {
+    func toJSON() -> Array<[String: Any]> {
+        return map { $0.toJSON() }
+    }
+}
+
 class Drawing: Object {
     enum UploadState: String {
         case sending
@@ -185,12 +191,6 @@ class Drawing: Object {
     @objc dynamic var uploadState: String = UploadState.sending.rawValue
     @objc dynamic var image: Image?
     var steps = List<DrawStep>()
-}
-
-extension List where List.Element: DrawStep {
-    func toJSON() -> Array<[String: Any]> {
-        return map { $0.toJSON() }
-    }
 }
 
 extension Drawing {

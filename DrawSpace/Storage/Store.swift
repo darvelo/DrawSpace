@@ -142,7 +142,9 @@ class LocalStore: Store {
         
         drawingsRealm.refresh()
     }
-    
+
+    // MARK: Private Methods
+
     private func mergeImageJson(_ drawingJson: Dictionary<String, Any>, into drawing: Drawing) {
         guard let imageId = drawingJson["imageId"] as? String,
             let resourceUrl = drawingJson["imageUrl"] as? String else {
@@ -151,13 +153,15 @@ class LocalStore: Store {
 
         let img = Image()
         img.id = imageId
+        // TODO: This URL should be passed straight through from the server, not modified on the client.
+        //       The reason I did this is because the server can be a local Docker container or a real server,
+        //       and a local Docker container may not know the right baseUrl needed by the client, since that
+        //       depends on the particular `docker-compose.yml` configuration.
         img.resourceUrl = "\(DrawingsNetworkLayer.baseUrl)\(resourceUrl)"
 
         drawing.image = img
     }
 
-    // MARK: Private Methods
-    
     private func populate(drawings jsonArray: DrawingsNetworkLayer.FetchedDrawings) {
         jsonArray.forEach { drawingJson in
             let drawing = Drawing()

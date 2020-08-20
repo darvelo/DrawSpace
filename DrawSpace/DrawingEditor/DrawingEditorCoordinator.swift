@@ -214,7 +214,7 @@ class DrawingEditorCoordinator: Coordinator, DrawingEditorViewControllerDelegate
 
     // MARK: Private Methods
 
-    func durationMark() -> Double {
+    private func durationMark() -> Double {
         let sessionDuration = Date().timeIntervalSince(startedAt)
         let durationMark = drawingDurationSeconds + sessionDuration
         return durationMark

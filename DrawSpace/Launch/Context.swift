@@ -43,9 +43,9 @@ class Context {
     
     private lazy var drawingsCoordinatorFactory: DrawingsCoordinatorFactory = {
         let coordinator = DrawingsCoordinator(store: self.store,
-                                           reachability: self.reachability,
-                                           drawingsNetworkLayer: self.drawingsNetworkLayer,
-                                           drawingEditorCoordinatorFactory: self.drawingEditorCoordinatorFactory)
+                                              reachability: self.reachability,
+                                              drawingsNetworkLayer: self.drawingsNetworkLayer,
+                                              drawingEditorCoordinatorFactory: self.drawingEditorCoordinatorFactory)
         return coordinator
     }
     

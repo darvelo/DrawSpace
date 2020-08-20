@@ -31,62 +31,18 @@ class ToolbarView: UIView {
         return view
     }()
 
-    private lazy var redView: UIView = {
-        let view = UIView(frame: .zero)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .red
-        view.layer.borderColor = colorViewBorderColor
-        view.layer.borderWidth = colorViewBorderWidth
-        return view
+    private lazy var colorViews: [UIView] = {
+        let colors: [UIColor] = [.red, .green, .blue, .purple, .orange, .white]
+        return colors.map { color in
+            let view = UIView(frame: .zero)
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = color
+            view.layer.borderColor = colorViewBorderColor
+            view.layer.borderWidth = colorViewBorderWidth
+            return view
+        }
     }()
 
-    private lazy var greenView: UIView = {
-        let view = UIView(frame: .zero)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .green
-        view.layer.borderColor = colorViewBorderColor
-        view.layer.borderWidth = colorViewBorderWidth
-        return view
-    }()
-
-    private lazy var blueView: UIView = {
-        let view = UIView(frame: .zero)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .blue
-        view.layer.borderColor = colorViewBorderColor
-        view.layer.borderWidth = colorViewBorderWidth
-        return view
-    }()
-
-    private lazy var purpleView: UIView = {
-        let view = UIView(frame: .zero)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .purple
-        view.layer.borderColor = colorViewBorderColor
-        view.layer.borderWidth = colorViewBorderWidth
-        return view
-    }()
-
-    private lazy var orangeView: UIView = {
-        let view = UIView(frame: .zero)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .orange
-        view.layer.borderColor = colorViewBorderColor
-        view.layer.borderWidth = colorViewBorderWidth
-        return view
-    }()
-    
-    private lazy var eraserView: UIView = {
-        let view = UIView(frame: .zero)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
-        view.layer.borderColor = colorViewBorderColor
-        view.layer.borderWidth = colorViewBorderWidth
-        return view
-    }()
-    
-    private lazy var colorViews = [redView, greenView, blueView, purpleView, orangeView, eraserView]
-    
     private lazy var toolbarColorView: UIStackView = {
         let view = UIStackView(arrangedSubviews: colorViews)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -108,8 +64,6 @@ class ToolbarView: UIView {
         addSubview(sliderView)
         addSubview(toolbarColorView)
         
-        let colorViewSize = Theme.toolbarView.colorViewSize
-        
         NSLayoutConstraint.activate([
             toolbarColorView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor),
             toolbarColorView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
@@ -119,7 +73,8 @@ class ToolbarView: UIView {
             sliderView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
             sliderView.bottomAnchor.constraint(equalTo: toolbarColorView.topAnchor),
         ])
-        
+
+        let colorViewSize = Theme.toolbarView.colorViewSize
         colorViews.forEach { view in
             NSLayoutConstraint.activate([
                 view.heightAnchor.constraint(equalToConstant: colorViewSize.height),

@@ -72,10 +72,13 @@ class DrawView: UIView {
         if step.points.count == 1 {
             block = { [weak self] in
                 guard let strongSelf = self else { return }
-                strongSelf.drawDot(at: currentPoint.cgPoint,
-                                   color: step.cgColor,
-                                   radius: CGFloat(step.strokeWidth / 2),
-                                   in: context)
+
+                if let color = step.cgColor {
+                    strongSelf.drawDot(at: currentPoint.cgPoint,
+                                       color: color,
+                                       radius: CGFloat(step.strokeWidth / 2),
+                                       in: context)
+                }
 
                 // Grab updated buffer and return it
                 let image = UIGraphicsGetImageFromCurrentImageContext()
@@ -86,11 +89,13 @@ class DrawView: UIView {
                 guard let strongSelf = self else { return }
                 let nextPoints = step.points.dropFirst()
                 for nextPoint in nextPoints {
-                    strongSelf.drawLine(from: currentPoint.cgPoint,
-                                        to: nextPoint.cgPoint,
-                                        color: step.cgColor,
-                                        strokeWidth: CGFloat(step.strokeWidth),
-                                        in: context)
+                    if let color = step.cgColor {
+                        strongSelf.drawLine(from: currentPoint.cgPoint,
+                                            to: nextPoint.cgPoint,
+                                            color: color,
+                                            strokeWidth: CGFloat(step.strokeWidth),
+                                            in: context)
+                    }
                     currentPoint = nextPoint
                 }
 

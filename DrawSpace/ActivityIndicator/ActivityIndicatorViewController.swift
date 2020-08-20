@@ -37,10 +37,10 @@ class ActivityIndicatorViewController: UIViewController {
 
         view.addSubview(activityIndicatorView)
         
-        [
+        NSLayoutConstraint.activate([
             activityIndicatorView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             activityIndicatorView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-        ].forEach { $0.isActive = true }
+        ])
     }
     
     override func viewWillAppear(_ animated: Bool) {

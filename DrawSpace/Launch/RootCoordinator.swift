@@ -15,7 +15,7 @@ class RootCoordinator: Coordinator, DrawingsCoordinatorDelegate {
     private let store: Store
     private let drawingsNetworkLayer: DrawingsNetworkLayer
     
-    private var drawingsCoordinatorFactory: DrawingsCoordinatorFactory
+    private let drawingsCoordinatorFactory: DrawingsCoordinatorFactory
     private var drawingsCoordinator: DrawingsCoordinator?
 
     private let activityIndicatorViewController = ActivityIndicatorViewController()
@@ -48,7 +48,7 @@ class RootCoordinator: Coordinator, DrawingsCoordinatorDelegate {
         }
     }
     
-    // MARK: NotesCoordinatorDelegate
+    // MARK: DrawingsCoordinatorDelegate
     
     func handleDrawingsCoordinatorEvent(_ event: DrawingsCoordinatorEvent) {
         switch event {
@@ -60,6 +60,8 @@ class RootCoordinator: Coordinator, DrawingsCoordinatorDelegate {
     // MARK: Private Methods
     
     private func syncDrawings(completion: (() -> Void)?) {
+        // TODO: Create a Service/Controller pattern to do this kind of fetch & store work.
+        //       Then have this call into the Service Controller to ask for the stored results.
         drawingsNetworkLayer.fetchDrawings { [weak self] result in
             switch result {
             case .success(let jsonArray):

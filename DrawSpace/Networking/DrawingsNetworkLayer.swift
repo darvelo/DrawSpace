@@ -11,6 +11,7 @@ import Reachability
 
 enum ResponseError: Error {
     case invalidJsonShape
+    case invalidInternalUrl(path: String)
 }
 
 class DrawingsNetworkLayer {
@@ -20,7 +21,7 @@ class DrawingsNetworkLayer {
     typealias FetchedDrawing = Dictionary<String, Any>
     typealias FetchedDrawings = Array<FetchedDrawing>
     typealias FetchDrawingsResult = Result<FetchedDrawings, AFError>
-    typealias CreateDrawingResult = Result<FetchedDrawing, AFError>
+    typealias SaveDrawingResult = Result<FetchedDrawing, AFError>
     typealias DeleteDrawingsResult = Result<Any, AFError>
 
     // MARK: Private Properties
@@ -43,8 +44,13 @@ class DrawingsNetworkLayer {
     
     // MARK: Public Methods
     
-    func upload(data: Data, completion: @escaping (Result<Dictionary<String, Any>, AFError>) -> Void) {
-        guard let url = URL(string: imagesUrlPath) else { return }
+    func uploadImage(data: Data, completion: @escaping (Result<Dictionary<String, Any>, AFError>) -> Void) {
+        let urlPath = imagesUrlPath
+        guard let url = URL(string: urlPath) else {
+            completion(.failure(.createURLRequestFailed(error: ResponseError.invalidInternalUrl(path: urlPath))))
+            return
+        }
+
         let headers: Alamofire.HTTPHeaders = [
             "Accept": "accept: application/json",
             "Content-Type": "multipart/form-data",
@@ -75,13 +81,13 @@ class DrawingsNetworkLayer {
         }
     }
 
-    func create(drawing: Drawing, isUpdate: Bool, completion: @escaping (CreateDrawingResult) -> Void) {
+    func save(drawing: Drawing, isUpdate: Bool, completion: @escaping (SaveDrawingResult) -> Void) {
         guard let data = drawing.localImageData else {
             assertionFailure("Had no local image data to persist")
             return
         }
 
-        upload(data: data) { result in
+        uploadImage(data: data) { result in
             switch result {
             case .success(let json):
                 self.persist(drawing: drawing, imageId: json["id"] as? String, imageUrl: json["url"] as? String, isUpdate: isUpdate, completion: completion)
@@ -92,7 +98,12 @@ class DrawingsNetworkLayer {
     }
 
     func deleteAll(completion: @escaping (DeleteDrawingsResult) -> Void) {
-        guard let url = URL(string: drawingsUrlPath) else { return }
+        let urlPath = drawingsUrlPath
+        guard let url = URL(string: urlPath) else {
+            completion(.failure(.createURLRequestFailed(error: ResponseError.invalidInternalUrl(path: urlPath))))
+            return
+        }
+
         let request = sessionManager.request(url,
                                              method: .delete,
                                              encoding: Alamofire.JSONEncoding())
@@ -107,7 +118,7 @@ class DrawingsNetworkLayer {
         }
     }
     
-    private func persist(drawing: Drawing, imageId: String?, imageUrl: String?, isUpdate: Bool, completion: @escaping (CreateDrawingResult) -> Void) {
+    private func persist(drawing: Drawing, imageId: String?, imageUrl: String?, isUpdate: Bool, completion: @escaping (SaveDrawingResult) -> Void) {
         guard let url = URL(string: isUpdate ? "\(drawingsUrlPath)/\(drawing.id)": drawingsUrlPath) else { return }
         
         let headers: Alamofire.HTTPHeaders = [
@@ -139,7 +150,7 @@ class DrawingsNetworkLayer {
         request.responseJSON { (response) in
             switch response.result {
             case .success(let data):
-                let result: CreateDrawingResult
+                let result: SaveDrawingResult
                 if let json = data as? FetchedDrawing, self.validate(drawing: json) {
                     print("persisted drawing JSON: \(json)")
                     result = .success(json)

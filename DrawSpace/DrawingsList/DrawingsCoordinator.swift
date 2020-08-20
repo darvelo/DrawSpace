@@ -219,7 +219,7 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
     private func persist(drawing: Drawing, isUpdate: Bool) {
         store.setUploadState(for: drawing, to: .sending)
 
-        let completion = { [weak self] (result: DrawingsNetworkLayer.CreateDrawingResult) in
+        drawingsNetworkLayer.save(drawing: drawing, isUpdate: isUpdate) { [weak self] (result) in
             switch result {
             case .success(let json):
                 self?.store.merge(json, into: drawing)
@@ -228,13 +228,14 @@ class DrawingsCoordinator: Coordinator, DrawingsViewControllerDelegate, DrawingE
                 self?.store.setUploadState(for: drawing, to: .failed)
             }
         }
-
-        drawingsNetworkLayer.create(drawing: drawing, isUpdate: isUpdate, completion: completion)
     }
     
     @objc private func reachabilityChanged(notification: Notification) {
         switch reachability.connection {
         case .wifi, .cellular:
+            // TODO: This may be an create OR update, depending on whether the
+            //       local drawing was previously persisted before being edited and saved locally.
+            //       To fix this the model would probably need a property holding the last persist date (or nil).
             store.localDrawings.forEach { self.persist(drawing: $0, isUpdate: false) }
         case .unavailable, .none:
             print("Network not reachable")

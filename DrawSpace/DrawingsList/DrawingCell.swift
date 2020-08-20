@@ -17,12 +17,14 @@ class DrawingCell: UITableViewCell {
     
     private var realmNotificationToken: NotificationToken?
     private var realmImageNotificationToken: NotificationToken?
+
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
         return formatter
     }()
+
     private lazy var numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = NumberFormatter.Style.decimal
@@ -76,13 +78,14 @@ class DrawingCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .lightGray
+
         addSubview(drawingImageView)
         addSubview(labelView)
         addSubview(uploadStateView)
         addSubview(activityIndicatorView)
         addSubview(circleIndicatorView)
         
-        [
+        NSLayoutConstraint.activate([
             drawingImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             drawingImageView.topAnchor.constraint(equalTo: topAnchor),
             drawingImageView.heightAnchor.constraint(equalTo: heightAnchor),
@@ -106,7 +109,7 @@ class DrawingCell: UITableViewCell {
             labelView.leadingAnchor.constraint(equalTo: drawingImageView.trailingAnchor, constant: 10),
             labelView.trailingAnchor.constraint(equalTo: uploadStateView.leadingAnchor, constant: -10),
             labelView.centerYAnchor.constraint(equalTo: centerYAnchor),
-        ].forEach { $0.isActive = true }
+        ])
     }
     
     required init?(coder: NSCoder) {
@@ -123,7 +126,7 @@ class DrawingCell: UITableViewCell {
         let formattedDate = dateFormatter.string(from: drawing.createdAt)
         let formattedDuration = numberFormatter.string(from: NSNumber(value: drawing.drawingDurationSeconds)) ?? "unknown"
         labelView.text = "Created: \(formattedDate)\(formattedDuration.isEmpty ? "" : "\nDraw duration: \(formattedDuration)")"
-        observeNoteUploadState(drawing: drawing)
+        observeUploadState(for: drawing)
         setImage(from: drawing)
         setUploadState(state: drawing.uploadState)
     }
@@ -137,8 +140,9 @@ class DrawingCell: UITableViewCell {
         realmImageNotificationToken = nil
     }
     
-    private func observeNoteUploadState(drawing: Drawing) {
+    private func observeUploadState(for drawing: Drawing) {
         invalidateRealmNotificationToken()
+
         realmNotificationToken = drawing.observe { [weak self] change in
             switch change {
             case .change(_, let properties):
@@ -155,7 +159,6 @@ class DrawingCell: UITableViewCell {
             }
         }
         
-        // Hacky perhaps, I think, to use two notification tokens when one might be enough.
         guard let image = drawing.image else { return }
         realmImageNotificationToken = image.observe { [weak self] change in
             switch change {
@@ -166,7 +169,7 @@ class DrawingCell: UITableViewCell {
                     }
                 }
             case .error(let error):
-                print("A Drawing change error occurred: \(error)")
+                print("A Drawing image change error occurred: \(error)")
                 self?.invalidateRealmNotificationToken()
             case .deleted:
                 self?.invalidateRealmNotificationToken()

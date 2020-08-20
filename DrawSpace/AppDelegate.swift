@@ -20,19 +20,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // Create Network Layer
-        let serverTrustManager = ServerTrustManager(evaluators: ["env-develop.saturn.engineering": DefaultTrustEvaluator()])
-        let sessionManager = Alamofire.Session(configuration: URLSessionConfiguration.af.default,
-                                               serverTrustManager: serverTrustManager)
+        //
+        // NOTE: Add hostname of server(s) into the evaluators dictionary.
+        let serverTrustManager = ServerTrustManager(evaluators: ["localhost": DefaultTrustEvaluator()])
+        let sessionManager = Alamofire.Session(serverTrustManager: serverTrustManager)
         let drawingsNetworkLayer = DrawingsNetworkLayer(sessionManager: sessionManager)
         
         // Create Local Storage Layer
         let store = LocalStore()
-        
-        // Create Initial Objects
+
+        // Initialize Reachability
         let reachability = try! Reachability()
+
+        // Create App Context
         let context = Context(drawingsNetworkLayer: drawingsNetworkLayer,
                               reachability: reachability,
                               store: store)
+
+        // Initialize Root Coordinator
         let coordinator = context.rootCoordinatorFactory()
         coordinator.start()
         
